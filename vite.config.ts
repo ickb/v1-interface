@@ -10,4 +10,5 @@ export default defineConfig({
       },
     }),
   ],
+  base: "/v1-interface/", // Just for testing on Github pages //////////////////////////////////////////
 });

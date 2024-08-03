@@ -2,14 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>iCKB DApp</title>
+    <title>iCKB Testnet DApp</title>
     <link
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏦</text></svg>"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <meta property="og:title" content="iCKB DApp" />
+    <meta property="og:title" content="iCKB Testnet DApp" />
     <meta property="og:type" content="website" />
     <meta
       property="og:description"
@@ -25,39 +25,33 @@
         class="flex flex-row items-center justify-center pb-4 text-5xl font-medium text-slate-200"
       >
         <span class="mr-2 text-5xl text-amber-400">{</span>
-        <span>iCKB DApp</span>
+        <span>iCKB Testnet DApp</span>
         <span class="ml-2 text-5xl text-amber-400">}</span>
       </h1>
-      <a href="https://github.com/ickb/v1-interface" class="rounded p-2"
-        >This project is not audited and it's provided as it is. Use it at your
-        own risk. It may lose your funds, burn your computer and charm your
-        lover, so do your own diligence by checking its source code.</a
-      >
-      <a href="https://fleek.co/" class="rounded p-2"
-        >Fleek is a IPFS pinning service. The Github repository is integrated
-        into an automated pipeline created by Fleek, so each time a commit is
-        added to the repository, it automatically updates the website to the
-        last revision.</a
-      >
-      <a href="https://www.ankr.com/" class="rounded p-2"
-        >ANKR is the external RPC provider used for accessing Nervos L1
-        blockchain data.</a
-      >
-      <p class="mt-8 p-2 text-xl font-medium text-slate-200">
-        Do you agree on being the sole responsible for using this DApp?
+      <p>
+        This is a iCKB Testnet DApp, a place where you can safely try out the
+        iCKB DApp and give feedback for how you would like to see its improved.
+        <a
+          href="https://faucet.nervos.org/"
+          class="underline decoration-amber-400 decoration-wavy underline-offset-4"
+          >Here the Faucet for Nervos Testnet CKB</a
+        >.
       </p>
-      <a
-        href="https://talk.nervos.org/t/ama-everything-ickb/7871"
-        class="text-s inline-flex h-12 w-full items-center justify-center rounded border-2 border-amber-400 font-bold uppercase leading-relaxed tracking-wider text-amber-400"
-      >
-        No, get me the dev
-      </a>
+      <p class="mt-8 p-2 text-xl font-medium text-slate-200">
+        Would you like to try out the DApp?
+      </p>
       <button
         id="metamask"
         class="text-s h-12 w-full rounded border-2 border-amber-400 font-bold uppercase leading-relaxed tracking-wider text-amber-400 disabled:opacity-50"
       >
         Yes, connect Metamask
       </button>
+      <a
+        href="https://talk.nervos.org/t/ama-everything-ickb/7871"
+        class="text-s inline-flex h-12 w-full items-center justify-center rounded border-2 border-amber-400 font-bold uppercase leading-relaxed tracking-wider text-amber-400"
+      >
+        No, I'll feedback the dev
+      </a>
       <div id="progress" class="hidden h-2 w-full overflow-hidden rounded">
         <div
           class="size-full animate-pulse bg-amber-400 [animation-delay:-3.00s] [animation-duration:6s]"
@@ -142,6 +136,48 @@
           );
         }
       </script>
+      <h2
+        class="items-center justify-center pb-4 pt-8 text-3xl font-medium text-slate-300"
+      >
+        Who is behind iCKB?
+      </h2>
+      <p>
+        A random developer, going by the pseudonym Phroi. The best way to
+        interact with me is in a written format, English is not my native
+        language. A bit on the over-thinker side, so much that I'm unwillingly
+        finding vulnerabilities in other people work. Also I like to relax
+        watching subbed anime at 2x, especially Isekai and similar.
+        <a
+          href="https://x.com/RunningCKB/status/1811885395866501248"
+          class="underline decoration-amber-400 decoration-wavy underline-offset-4"
+          >I'll be at Chiang Mai CKCON, feel free to come and say hi!!</a
+        >
+      </p>
+      <p>
+        The Nervos Foundation who sponsored the iCKB project in a way that
+        enabled its development as a public good. iCKB would not have happened
+        without their help, especially Jordan and Matt.
+      </p>
+      <p>
+        Many people in the Nervos ecosystem helped out iCKB directly or
+        indirectly, I'm especially grateful to Homura. iCKB DApp would not be
+        here without
+        <a
+          href="https://github.com/ckb-js/lumos/issues?q=is%3Aissue+author%3Aphroi+is%3Aclosed"
+          class="underline decoration-amber-400 decoration-wavy underline-offset-4"
+          >Lumos and his continuos support</a
+        >.
+      </p>
+      <p>
+        Jan and his team helped a lot in many different ways. They'll (likely)
+        be also the ones conducting an informal audit on iCKB Scripts. I hope
+        that they'll be the ones deploying the scripts on mainnet, we'll see.
+      </p>
+      <p>
+        Nervos Nation who will (likely) host the final mainnet DApp, making sure
+        that the DApp is safe and also organize a Reddit AMA for iCKB. They are
+        a cool bunch. Nervos Community is lucky to have them.
+      </p>
     </div>
   </body>
 </html>
