@@ -6,23 +6,25 @@ import { getIckbScriptConfigs } from "@ickb/v1-core";
 import { chainConfigFrom } from "@ickb/lumos-utils";
 import { prefetchData } from "./queries.ts";
 
-const queryClient = new QueryClient();
-const chainConfig = await chainConfigFrom(
+const rootConfigPromise = chainConfigFrom(
   "testnet",
   undefined,
   true,
   getIckbScriptConfigs,
-);
-const rootConfig = { ...chainConfig, queryClient };
-prefetchData(rootConfig);
-const rootElement = document.getElementById("app")!;
-const root = createRoot(rootElement);
+).then((chainConfig) => {
+  const rootConfig = { ...chainConfig, queryClient: new QueryClient() };
+  prefetchData(rootConfig);
+  return rootConfig;
+});
 
 export async function startApp() {
+  const rootConfig = await rootConfigPromise;
+  const rootElement = document.getElementById("app")!;
+  const root = createRoot(rootElement);
   rootElement.textContent = "";
   root.render(
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={rootConfig.queryClient}>
         <Metamask {...{ rootConfig }} />
       </QueryClientProvider>
     </StrictMode>,
