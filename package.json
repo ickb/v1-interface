@@ -1,0 +1,50 @@
+{
+  "name": "v1-interface",
+  "version": "1.3.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@ckb-lumos/base": "^0.23.0",
+    "@ckb-lumos/codec": "^0.23.0",
+    "@ckb-lumos/common-scripts": "^0.23.0",
+    "@ckb-lumos/config-manager": "^0.23.0",
+    "@ckb-lumos/hd": "^0.23.0",
+    "@ckb-lumos/helpers": "^0.23.0",
+    "@ckb-lumos/rpc": "^0.23.0",
+    "immutable": "^4.3.6",
+    "@ickb/lumos-utils": "1.4.0",
+    "@ickb/v1-core": "1.4.0",
+    "@tanstack/react-query": "^5.50.1",
+    "react-aria-components": "nightly",
+    "react": "rc",
+    "react-dom": "rc"
+  },
+  "devDependencies": {
+    "@babel/preset-react": "^7.24.7",
+    "@types/react": "npm:types-react@rc",
+    "@types/react-dom": "npm:types-react-dom@rc",
+    "@vitejs/plugin-react": "^4.3.1",
+    "babel-plugin-react-compiler": "latest",
+    "eslint-plugin-react-compiler": "latest",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.7",
+    "tailwindcss": "^3.4.4",
+    "postcss": "^8.4.38",
+    "autoprefixer": "^10.4.19",
+    "prettier-plugin-tailwindcss": "^0.6.2",
+    "tailwindcss-react-aria-components": "^1.1.3",
+    "tailwindcss-animate": "^1.0.7",
+    "vite": "^5.2.13",
+    "typescript": "next",
+    "eslint": "^9.0.0",
+    "@typescript-eslint/eslint-plugin": "canary",
+    "@typescript-eslint/parser": "canary",
+    "prettier": "^3.3.3"
+  },
+  "packageManager": "pnpm@9.6.0+sha256.dae0f7e822c56b20979bb5965e3b73b8bdabb6b8b8ef121da6d857508599ca35"
+}
