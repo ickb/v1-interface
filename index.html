@@ -15,6 +15,7 @@
       property="og:description"
       content="An interface for interacting with iCKB scripts."
     />
+    <script type="module" crossorigin src="/v1-interface/assets/index-CDWGb5kZ.js"></script>
     <link rel="stylesheet" crossorigin href="/v1-interface/assets/index-CV-rJMgc.css">
   </head>
   <body
@@ -117,25 +118,6 @@
           class="size-full animate-pulse bg-amber-400 [animation-duration:6s]"
         ></div>
       </div>
-      <script>
-        const buttons = document.getElementsByTagName("button");
-        const progress = document.getElementById("progress");
-        const myModule = import("data:application/octet-stream;base64,aW1wb3J0IHsgU3RyaWN0TW9kZSB9IGZyb20gInJlYWN0IjsKaW1wb3J0IHsgY3JlYXRlUm9vdCB9IGZyb20gInJlYWN0LWRvbS9jbGllbnQiOwppbXBvcnQgeyBRdWVyeUNsaWVudCwgUXVlcnlDbGllbnRQcm92aWRlciB9IGZyb20gIkB0YW5zdGFjay9yZWFjdC1xdWVyeSI7CmltcG9ydCBNZXRhbWFzayBmcm9tICIuL01ldGFtYXNrLnRzeCI7CmltcG9ydCB7IGdldElja2JTY3JpcHRDb25maWdzIH0gZnJvbSAiQGlja2IvdjEtY29yZSI7CmltcG9ydCB7IGNoYWluQ29uZmlnRnJvbSB9IGZyb20gIkBpY2tiL2x1bW9zLXV0aWxzIjsKaW1wb3J0IHsgcHJlZmV0Y2hEYXRhIH0gZnJvbSAiLi9xdWVyaWVzLnRzIjsKCmNvbnN0IHF1ZXJ5Q2xpZW50ID0gbmV3IFF1ZXJ5Q2xpZW50KCk7CmNvbnN0IGNoYWluQ29uZmlnID0gYXdhaXQgY2hhaW5Db25maWdGcm9tKAogICJ0ZXN0bmV0IiwKICB1bmRlZmluZWQsCiAgdHJ1ZSwKICBnZXRJY2tiU2NyaXB0Q29uZmlncywKKTsKY29uc3Qgcm9vdENvbmZpZyA9IHsgLi4uY2hhaW5Db25maWcsIHF1ZXJ5Q2xpZW50IH07CnByZWZldGNoRGF0YShyb290Q29uZmlnKTsKY29uc3Qgcm9vdEVsZW1lbnQgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBwIikhOwpjb25zdCByb290ID0gY3JlYXRlUm9vdChyb290RWxlbWVudCk7CgpleHBvcnQgYXN5bmMgZnVuY3Rpb24gc3RhcnRBcHAoKSB7CiAgcm9vdEVsZW1lbnQudGV4dENvbnRlbnQgPSAiIjsKICByb290LnJlbmRlcigKICAgIDxTdHJpY3RNb2RlPgogICAgICA8UXVlcnlDbGllbnRQcm92aWRlciBjbGllbnQ9e3F1ZXJ5Q2xpZW50fT4KICAgICAgICA8TWV0YW1hc2sgey4uLnsgcm9vdENvbmZpZyB9fSAvPgogICAgICA8L1F1ZXJ5Q2xpZW50UHJvdmlkZXI+CiAgICA8L1N0cmljdE1vZGU+LAogICk7Cn0K");
-        for (const button of buttons) {
-          button.addEventListener(
-            "click",
-            async (event) => {
-              for (const button of buttons) {
-                button.disabled = true;
-              }
-              progress.classList.replace("hidden", "flex");
-              const { startApp } = await myModule;
-              startApp(event.target.id);
-            },
-            false,
-          );
-        }
-      </script>
       <h2
         class="items-center justify-center pb-4 pt-8 text-3xl font-medium text-slate-300"
       >
