@@ -37,9 +37,11 @@
           >Here the Faucet for Nervos Testnet CKB</a
         >.
       </p>
-      <p class="mt-8 p-2 text-xl font-medium text-slate-200">
+      <h2
+        class="items-center justify-center pb-4 pt-8 text-3xl font-medium text-slate-300"
+      >
         Would you like to try out the DApp?
-      </p>
+      </h2>
       <button
         id="metamask"
         class="text-s h-12 w-full rounded border-2 border-amber-400 font-bold uppercase leading-relaxed tracking-wider text-amber-400 disabled:opacity-50"
@@ -136,6 +138,62 @@
           );
         }
       </script>
+      <h2
+        class="items-center justify-center pb-4 pt-8 text-3xl font-medium text-slate-300"
+      >
+        What is iCKB?
+      </h2>
+      <p>
+        iCKB is a protocol that aims to solve the illiquidity problem of the
+        Nervos DAO by tokenizing the DAO deposits and allowing anyone to unlock
+        the deposits, not just the original depositor.
+      </p>
+      <p>
+        The
+        <a
+          href="https://github.com/ickb/proposal/?tab=readme-ov-file#ickbckb-exchange-rate-idea"
+          class="underline decoration-amber-400 decoration-wavy underline-offset-4"
+          >iCKB/CKB exchange rate</a
+        >
+        is designed to be deterministic, tracking the inflation rate of CKB as
+        defined by the Nervos DAO compensation formula.
+      </p>
+      <p>
+        The
+        <a
+          href="https://github.com/ickb/proposal/?tab=readme-ov-file#deposit"
+          class="underline decoration-amber-400 decoration-wavy underline-offset-4"
+          >deposit process</a
+        >
+        is split into two phases - the first locks CKB and issues a receipt, the
+        second converts the receipt into iCKB tokens.
+      </p>
+      <p>
+        The
+        <a
+          href="https://github.com/ickb/proposal/?tab=readme-ov-file#withdrawal"
+          class="underline decoration-amber-400 decoration-wavy underline-offset-4"
+          >withdrawal process</a
+        >
+        also has two phases - burning iCKB/receipts to request withdrawal, then
+        completing the withdrawal from the Nervos DAO.
+      </p>
+      <p>
+        Additionally, a
+        <a
+          href="https://github.com/ickb/proposal/?tab=readme-ov-file#limit-order-script"
+          class="underline decoration-amber-400 decoration-wavy underline-offset-4"
+          >limit order script</a
+        >
+        is used to overcome the limitations of the underlying NervosDAO and iCKB
+        protocols, allowing for more flexible and user-friendly experiences
+        within the iCKB ecosystem.
+      </p>
+      <p>
+        The limit order process is split into three phases - a user mint the
+        order, then a bot match the order and at the end the user melt the order
+        to collect his assets.
+      </p>
       <h2
         class="items-center justify-center pb-4 pt-8 text-3xl font-medium text-slate-300"
       >

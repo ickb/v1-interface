@@ -21,8 +21,13 @@ export default function App({ walletConfig }: { walletConfig: WalletConfig }) {
   let text = sanitize(rawText);
   let amount = toBigInt(text);
 
-  const { ckbBalance, ickbUdtBalance, ckbAvailable, ickbUdtAvailable } =
-    useQuery(l1StateOptions(walletConfig, isFrozen)).data!;
+  const {
+    ckbBalance,
+    ickbUdtBalance,
+    ckbAvailable,
+    ickbUdtAvailable,
+    tipHeader,
+  } = useQuery(l1StateOptions(walletConfig, isFrozen)).data!;
 
   const amountCap = isCkb2Udt ? ckbAvailable : ickbUdtAvailable;
   if (amount > amountCap) {
@@ -42,7 +47,7 @@ export default function App({ walletConfig }: { walletConfig: WalletConfig }) {
       <Dashboard
         {...{ isFrozen, walletConfig, ckbBalance, ickbUdtBalance, formSetMax }}
       />
-      <Form {...{ rawText: symbol + text, setRawText, isFrozen }} />
+      <Form {...{ rawText: symbol + text, setRawText, tipHeader, isFrozen }} />
       <Action
         {...useDeferredValue({
           isCkb2Udt,

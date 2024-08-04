@@ -59,7 +59,7 @@ export function Dashboard({
             className="text-s h-min-12 w-full rounded px-8 font-bold uppercase leading-relaxed tracking-wider"
             onPress={() => formSetMax(true)}
           >
-            CKB: {display(ckbBalance)}
+            {display(ckbBalance)} CKB
           </Button>
           <span className="px-4">&</span>
           <Button
@@ -67,7 +67,7 @@ export function Dashboard({
             className="text-s h-min-12 w-full rounded px-8 font-bold uppercase leading-relaxed tracking-wider"
             onPress={() => formSetMax(false)}
           >
-            iCKB: {display(ickbUdtBalance)}
+            {display(ickbUdtBalance)} iCKB
           </Button>
         </div>
       ) : undefined}

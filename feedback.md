@@ -10,13 +10,7 @@ Halfway done, not sure about the foundation logo on the homepage.
 
 > You will always get less ickb than what you exchanged. That’s because the lifetime earnings of the dao are baked into the ickb you receive correct? Looks like around 13%. [Sean]
 
-Yup, to do
-
-This is tricky to get right as the full explanation is long and involved. Maybe it would help showing:
-
-- The exchange ratio (as all converters do)
-- A tooltip with a short explanation
-- Within the short explanation, a link to the complete one.
+Halfway done, now the exchange ratio is shown in the app and in the homepage there is a short explanation with links about the protocol. Not sure I want to add a tooltip in the app itself.
 
 > Is there a wait to exchange ickb back to CKB? [Sean]
 

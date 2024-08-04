@@ -50,6 +50,7 @@ export function l1StateOptions(walletConfig: WalletConfig, isFrozen: boolean) {
       ickbUdtBalance: -1n,
       ckbAvailable: 6n * CKB * CKB,
       ickbUdtAvailable: 3n * CKB * CKB,
+      tipHeader: headerPlaceholder,
       txBuilder: () => TransactionSkeleton(),
       hasMatchable: false,
     },
@@ -172,6 +173,7 @@ async function getL1State(walletConfig: WalletConfig) {
     ickbUdtBalance,
     ckbAvailable,
     ickbUdtAvailable,
+    tipHeader,
     txBuilder,
     hasMatchable,
   };
@@ -243,7 +245,7 @@ async function getHeadersByNumber(
   return frozenResult;
 }
 
-const headerPlaceholder = I8Header.from({
+export const headerPlaceholder = I8Header.from({
   compactTarget: "0x1a08a97e",
   parentHash:
     "0x0000000000000000000000000000000000000000000000000000000000000000",
