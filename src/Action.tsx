@@ -32,7 +32,7 @@ export default function Action({
   const { data, isStale, isFetching, isPending } = useQuery(
     l1StateOptions(walletConfig, isFrozen),
   );
-  const tx = isFrozen ? frozenTx : data!.txBuilder(isCkb2Udt, amount);
+  const tx = isFrozen ? frozenTx : data!.txBuilder(isCkb2Udt, amount).tx;
   const isValid = isPopulated(tx);
 
   return (

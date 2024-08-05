@@ -27,9 +27,10 @@ import {
   orderSifter,
   ownedOwnerScript,
 } from "@ickb/v1-core";
-import type { RootConfig, WalletConfig } from "./utils.ts";
+import { maxWaitTime, type RootConfig, type WalletConfig } from "./utils.ts";
 import { addChange, base, convert } from "./transaction.ts";
 import type { Header, HexNumber } from "@ckb-lumos/base";
+import { parseAbsoluteEpochSince, parseEpoch } from "@ckb-lumos/base/lib/since";
 
 export function l1StateOptions(walletConfig: WalletConfig, isFrozen: boolean) {
   return queryOptions({
@@ -51,7 +52,7 @@ export function l1StateOptions(walletConfig: WalletConfig, isFrozen: boolean) {
       ckbAvailable: 6n * CKB * CKB,
       ickbUdtAvailable: 3n * CKB * CKB,
       tipHeader: headerPlaceholder,
-      txBuilder: () => TransactionSkeleton(),
+      txBuilder: () => ({ tx: TransactionSkeleton(), txInfo: [] }),
       hasMatchable: false,
     },
     enabled: !isFrozen,
@@ -127,24 +128,43 @@ async function getL1State(walletConfig: WalletConfig) {
     mature.length > 0 || receipts.length > 0 || myOrders.length > 0;
 
   // Calculate balances and baseTx
-  const baseTx = base({
+  const { tx: baseTx, info: baseInfo } = base({
     capacities,
-    myOrders,
     udts,
+    myOrders,
     receipts,
     wrGroups: mature,
   });
 
-  let ckbBalance = ckbDelta(baseTx, 0n, config);
-  const ckbAvailable = max((ckbBalance / CKB - 1000n) * CKB, 0n);
-  ckbBalance += ckbDelta(
-    addWithdrawalRequestGroups(TransactionSkeleton(), notMature),
-    0n,
-    config,
-  );
-
   const ickbUdtBalance = ickbDelta(baseTx, config);
   const ickbUdtAvailable = ickbUdtBalance;
+
+  let ckbBalance = ckbDelta(baseTx, 0n, config);
+  const ckbAvailable = max((ckbBalance / CKB - 1000n) * CKB, 0n);
+  let txInfo = baseInfo;
+  if (notMature.length > 0) {
+    ckbBalance += ckbDelta(
+      addWithdrawalRequestGroups(TransactionSkeleton(), notMature),
+      0n,
+      config,
+    );
+
+    const wrWaitTime = maxWaitTime(
+      notMature.map((g) =>
+        parseAbsoluteEpochSince(
+          g.ownedWithdrawalRequest.cellOutput.type![since],
+        ),
+      ),
+      tipHeader,
+    );
+
+    txInfo = Object.freeze(
+      txInfo.concat([
+        `Excluding ${notMature.length} withdrawal request${notMature.length > 1 ? "s" : ""}` +
+          `with maturity in ${wrWaitTime}`,
+      ]),
+    );
+  }
 
   const feeRate = await feeRatePromise;
 
@@ -152,6 +172,7 @@ async function getL1State(walletConfig: WalletConfig) {
     if (amount > 0n) {
       return convert(
         baseTx,
+        txInfo,
         isCkb2Udt,
         amount,
         ickbPool,
@@ -162,10 +183,10 @@ async function getL1State(walletConfig: WalletConfig) {
     }
 
     if (txConsumesIntermediate) {
-      return addChange(baseTx, feeRate, walletConfig);
+      return addChange(baseTx, txInfo, feeRate, walletConfig);
     }
 
-    return TransactionSkeleton();
+    return { tx: TransactionSkeleton(), txInfo: [] };
   };
 
   return {

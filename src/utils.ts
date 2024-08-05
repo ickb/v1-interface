@@ -1,7 +1,14 @@
 import type { Cell, HexString, Transaction } from "@ckb-lumos/base";
 import type { TransactionSkeletonType } from "@ckb-lumos/helpers";
 import type { QueryClient } from "@tanstack/react-query";
-import { CKB, type ChainConfig, type I8Script } from "@ickb/lumos-utils";
+import {
+  CKB,
+  epochSinceCompare,
+  type ChainConfig,
+  type I8Header,
+  type I8Script,
+} from "@ickb/lumos-utils";
+import { parseEpoch, type EpochSinceValue } from "@ckb-lumos/base/lib/since";
 
 export interface RootConfig extends ChainConfig {
   queryClient: QueryClient;
@@ -67,4 +74,21 @@ export function toBigInt(text: string) {
   return BigInt(
     (decimal ?? "0") + ((fractionals ?? []).join("") + "00000000").slice(0, 8),
   );
+}
+
+export function maxWaitTime(ee: EpochSinceValue[], tipHeader: I8Header) {
+  const t = parseEpoch(tipHeader.epoch);
+  const e = ee.reduce((a, b) => (epochSinceCompare(a, b) === -1 ? b : a));
+  const epochs = e.index / e.length - t.index / t.length + e.number - t.number;
+  if (epochs <= 0.375) {
+    //90 minutes
+    return `${String(1 + Math.ceil(epochs * 4 * 60))} minutes`;
+  }
+
+  if (epochs <= 6) {
+    //24 hours
+    return `${String(1 + Math.ceil(epochs * 4))} hours`;
+  }
+
+  return `${String(1 + Math.ceil(epochs / 6))} days`;
 }
