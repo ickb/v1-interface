@@ -27,10 +27,15 @@ import {
   orderSifter,
   ownedOwnerScript,
 } from "@ickb/v1-core";
-import { maxWaitTime, type RootConfig, type WalletConfig } from "./utils.ts";
+import {
+  maxWaitTime,
+  txInfoFrom,
+  type RootConfig,
+  type WalletConfig,
+} from "./utils.ts";
 import { addChange, base, convert } from "./transaction.ts";
 import type { Header, HexNumber } from "@ckb-lumos/base";
-import { parseAbsoluteEpochSince, parseEpoch } from "@ckb-lumos/base/lib/since";
+import { parseAbsoluteEpochSince } from "@ckb-lumos/base/lib/since";
 
 export function l1StateOptions(walletConfig: WalletConfig, isFrozen: boolean) {
   return queryOptions({
@@ -52,7 +57,7 @@ export function l1StateOptions(walletConfig: WalletConfig, isFrozen: boolean) {
       ckbAvailable: 6n * CKB * CKB,
       ickbUdtAvailable: 3n * CKB * CKB,
       tipHeader: headerPlaceholder,
-      txBuilder: () => ({ tx: TransactionSkeleton(), txInfo: [] }),
+      txBuilder: () => txInfoFrom({}),
       hasMatchable: false,
     },
     enabled: !isFrozen,
@@ -141,7 +146,7 @@ async function getL1State(walletConfig: WalletConfig) {
 
   let ckbBalance = ckbDelta(baseTx, 0n, config);
   const ckbAvailable = max((ckbBalance / CKB - 1000n) * CKB, 0n);
-  let txInfo = baseInfo;
+  let info = baseInfo;
   if (notMature.length > 0) {
     ckbBalance += ckbDelta(
       addWithdrawalRequestGroups(TransactionSkeleton(), notMature),
@@ -158,8 +163,8 @@ async function getL1State(walletConfig: WalletConfig) {
       tipHeader,
     );
 
-    txInfo = Object.freeze(
-      txInfo.concat([
+    info = Object.freeze(
+      info.concat([
         `Excluding ${notMature.length} withdrawal request${notMature.length > 1 ? "s" : ""}` +
           `with maturity in ${wrWaitTime}`,
       ]),
@@ -169,9 +174,10 @@ async function getL1State(walletConfig: WalletConfig) {
   const feeRate = await feeRatePromise;
 
   const txBuilder = (isCkb2Udt: boolean, amount: bigint) => {
+    const txInfo = txInfoFrom({ tx: baseTx, info });
+
     if (amount > 0n) {
       return convert(
-        baseTx,
         txInfo,
         isCkb2Udt,
         amount,
@@ -183,10 +189,10 @@ async function getL1State(walletConfig: WalletConfig) {
     }
 
     if (txConsumesIntermediate) {
-      return addChange(baseTx, txInfo, feeRate, walletConfig);
+      return addChange(txInfo, feeRate, walletConfig);
     }
 
-    return { tx: TransactionSkeleton(), txInfo: [] };
+    return txInfoFrom({ error: "Nothing to convert" });
   };
 
   return {

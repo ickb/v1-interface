@@ -14,4 +14,4 @@ Halfway done, now the exchange ratio is shown in the app and in the homepage the
 
 > Is there a wait to exchange ickb back to CKB? [Sean]
 
-Yup, to do
+Done

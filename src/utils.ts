@@ -1,9 +1,13 @@
 import type { Cell, HexString, Transaction } from "@ckb-lumos/base";
-import type { TransactionSkeletonType } from "@ckb-lumos/helpers";
+import {
+  TransactionSkeleton,
+  type TransactionSkeletonType,
+} from "@ckb-lumos/helpers";
 import type { QueryClient } from "@tanstack/react-query";
 import {
   CKB,
   epochSinceCompare,
+  isPopulated,
   type ChainConfig,
   type I8Header,
   type I8Script,
@@ -91,4 +95,24 @@ export function maxWaitTime(ee: EpochSinceValue[], tipHeader: I8Header) {
   }
 
   return `${String(1 + Math.ceil(epochs / 6))} days`;
+}
+
+export type TxInfo = {
+  tx: TransactionSkeletonType;
+  info: readonly string[];
+  error: string;
+  isEmpty: boolean;
+};
+
+export function txInfoFrom({
+  tx = TransactionSkeleton(),
+  info = <readonly string[]>[],
+  error = "",
+}): Readonly<TxInfo> {
+  if (error.length > 0) {
+    tx = TransactionSkeleton();
+  }
+
+  const isEmpty = !isPopulated(tx) && info.length === 0 && error.length === 0;
+  return Object.freeze({ tx, info: Object.freeze(info), error, isEmpty });
 }

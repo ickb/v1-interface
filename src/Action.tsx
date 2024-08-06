@@ -1,9 +1,5 @@
 import { Button } from "react-aria-components";
-import type { WalletConfig } from "./utils.ts";
-import {
-  TransactionSkeleton,
-  type TransactionSkeletonType,
-} from "@ckb-lumos/helpers";
+import { txInfoFrom, type TxInfo, type WalletConfig } from "./utils.ts";
 import Progress from "./Progress.tsx";
 import { l1StateOptions } from "./queries.ts";
 import { useState } from "react";
@@ -23,17 +19,17 @@ export default function Action({
   formReset: () => void;
   walletConfig: WalletConfig;
 }) {
-  const [frozenTx, _setFrozenTx] = useState(TransactionSkeleton());
-  const freezeTx = (tx: TransactionSkeletonType) => {
-    _setFrozenTx(tx);
-    freeze(isPopulated(tx));
+  const [frozenTxInfo, _setFrozenTxInfo] = useState(txInfoFrom({}));
+  const freezeTxInfo = (txInfo: TxInfo) => {
+    _setFrozenTxInfo(txInfo);
+    freeze(!txInfo.isEmpty);
   };
-  const isFrozen = isPopulated(frozenTx);
+  const isFrozen = !frozenTxInfo.isEmpty;
   const { data, isStale, isFetching, isPending } = useQuery(
     l1StateOptions(walletConfig, isFrozen),
   );
-  const tx = isFrozen ? frozenTx : data!.txBuilder(isCkb2Udt, amount).tx;
-  const isValid = isPopulated(tx);
+  const txInfo = isFrozen ? frozenTxInfo : data!.txBuilder(isCkb2Udt, amount);
+  const isValid = isPopulated(txInfo.tx);
 
   return (
     <>
@@ -41,10 +37,7 @@ export default function Action({
         <p>Downloading the latest L1 Cell data, just for you. Hang tight...</p>
       ) : (
         <div className={isFrozen ? "text-slate-100" : ""}>
-          {String(tx.inputs.size) +
-            " Cells => " +
-            String(tx.outputs.size) +
-            " Cells (TODO: improve tx explanation)"}
+          {txInfo.info.concat([txInfo.error]).join(". ")}
         </div>
       )}
       <Button
@@ -59,7 +52,7 @@ export default function Action({
                     "l1State",
                   ],
                 })
-            : () => transact(tx, freezeTx, formReset, walletConfig),
+            : () => transact(txInfo, freezeTxInfo, formReset, walletConfig),
           isDisabled: isFetching || isFrozen || !isValid,
         }}
       >
@@ -79,15 +72,15 @@ export default function Action({
 }
 
 async function transact(
-  tx: TransactionSkeletonType,
-  freezeTx: (tx: TransactionSkeletonType) => void,
+  txInfo: TxInfo,
+  freezeTxInfo: (txInfo: TxInfo) => void,
   formReset: () => void,
   walletConfig: WalletConfig,
 ) {
   const { rpc, signer } = walletConfig;
   try {
-    freezeTx(tx);
-    const txHash = await rpc.sendTransaction(await signer(tx));
+    freezeTxInfo(txInfo);
+    const txHash = await rpc.sendTransaction(await signer(txInfo.tx));
     let status = "pending";
     while (status === "pending" || status === "proposed") {
       await new Promise((r) => setTimeout(r, 10000));
@@ -96,6 +89,6 @@ async function transact(
     formReset();
     console.log(txHash, status);
   } finally {
-    freezeTx(TransactionSkeleton());
+    freezeTxInfo(txInfoFrom({}));
   }
 }
