@@ -37,7 +37,9 @@ export default function Action({
         <p>Downloading the latest L1 Cell data, just for you. Hang tight...</p>
       ) : (
         <div className={isFrozen ? "text-slate-100" : ""}>
-          {txInfo.info.concat([txInfo.error]).join(". ")}
+          {txInfo.info
+            .concat(txInfo.error !== "" ? [txInfo.error, ""] : [""])
+            .join(". ")}
         </div>
       )}
       <Button

@@ -13,6 +13,7 @@ import {
   addOwnedWithdrawalRequestsChange,
   addReceiptDepositsChange,
   addWithdrawalRequestGroups,
+  ickb2Ckb,
   ickbDeposit,
   ickbExchangeRatio,
   ickbRequestWithdrawalFrom,
@@ -50,14 +51,6 @@ export function base({
   let tx = TransactionSkeleton();
   const info: string[] = [];
 
-  tx = addCells(tx, "append", [capacities, udts, receipts].flat(), []);
-  // Receipts need explanation, while capacities and udts do not
-  if (receipts.length > 0) {
-    info.push(
-      `Converting ${receipts.length} iCKB Receipt${receipts.length > 1 ? "s" : ""} to iCKB`,
-    );
-  }
-
   tx = orderMelt(tx, myOrders);
   let notCompleted = myOrders.reduce(
     (c, { info }) => (info.isMatchable ? c + 1 : c),
@@ -65,20 +58,28 @@ export function base({
   );
   if (notCompleted > 0) {
     info.push(
-      `Cancelling ${notCompleted} open order${notCompleted > 1 ? "s" : ""}`,
+      `Cancelling ${notCompleted} Open Order${notCompleted > 1 ? "s" : ""}`,
     );
   }
   let completed = myOrders.length - notCompleted;
   if (completed > 0) {
     info.push(
-      `Melting ${completed} completed order${completed > 1 ? "s" : ""}`,
+      `Melting ${completed} Completed Order${completed > 1 ? "s" : ""}`,
+    );
+  }
+
+  tx = addCells(tx, "append", [capacities, udts, receipts].flat(), []);
+  // Receipts need explanation, while capacities and udts do not
+  if (receipts.length > 0) {
+    info.push(
+      `Converting ${receipts.length} Receipt${receipts.length > 1 ? "s" : ""} to iCKB`,
     );
   }
 
   tx = addWithdrawalRequestGroups(tx, wrGroups);
   if (wrGroups.length > 0) {
     info.push(
-      `Withdrawing from ${wrGroups.length} withdrawal request${wrGroups.length > 1 ? "s" : ""}`,
+      `Withdrawing from ${wrGroups.length} Withdrawal Request${wrGroups.length > 1 ? "s" : ""}`,
     );
   }
 
@@ -172,24 +173,24 @@ function convertAttempt(
       amount -= depositAmount * BigInt(quantity);
       if (amount < 0n) {
         return txInfoFrom({
-          error: "Too many deposits respectfully to the amount",
+          error: "Too many Deposits respectfully to the amount",
         });
       }
       tx = ickbDeposit(tx, quantity, depositAmount, config);
       tx = addReceiptDepositsChange(tx, accountLock, config);
       info = info.concat([]);
       info = info.concat([
-        `Creating ${quantity} deposit${quantity > 1 ? "s" : ""}`,
-        `Creating an iCKB Receipt for the deposit${quantity > 1 ? "s" : ""}`,
+        `Creating ${quantity} standard deposit${quantity > 1 ? "s" : ""} ` +
+          `and ${quantity > 1 ? "their" : "its"} Receipt`,
       ]);
     } else {
       if (ickbPool.length < quantity) {
-        return txInfoFrom({ error: "Not enough deposits to withdraw from" });
+        return txInfoFrom({ error: "Not enough Deposits to withdraw from" });
       }
       amount -= ickbPool[quantity - 1].ickbCumulative;
       if (amount < 0n) {
         return txInfoFrom({
-          error: "Too many withdrawal requests respectfully to the amount",
+          error: "Too many Withdrawal Requests respectfully to the amount",
         });
       }
       ickbPool = ickbPool.slice(0, quantity);
@@ -201,8 +202,8 @@ function convertAttempt(
         tipHeader,
       );
       info = info.concat([
-        `Requesting withdrawal from ${quantity} deposit${quantity > 1 ? "s" : ""}` +
-          ` with maximum maturity in ${waitTime}`,
+        `Requesting the Withdrawal from ${quantity} Deposit${quantity > 1 ? "s" : ""}` +
+          ` with maturity in ${waitTime}`,
       ]);
     }
   }
@@ -217,7 +218,20 @@ function convertAttempt(
       isCkb2Udt ? ratio : undefined,
       isCkb2Udt ? undefined : ratio,
     );
-    info = info.concat([`Creating a limit order for the remaining amount`]);
+    // 0.1% fee to bot
+    const fee = isCkb2Udt
+      ? amount -
+        ickb2Ckb(
+          (amount * ratio.ckbMultiplier) / ratio.udtMultiplier,
+          tipHeader,
+        )
+      : ickb2Ckb(amount, tipHeader) -
+        (amount * ratio.udtMultiplier) / ratio.ckbMultiplier;
+    info = info.concat([
+      `Creating a Limit Order for ${quantity > 0 ? "the remaining" : ""} ` +
+        `${toText(amount)} ${isCkb2Udt ? "CKB" : "iCKB"}` +
+        `  offering a Fee of ${toText(fee)} CKB`,
+    ]);
   }
 
   return addChange(txInfoFrom({ tx, info }), feeRate, walletConfig);
@@ -261,7 +275,7 @@ export function addChange(
 
   //return txFee from addCkbChange///////////////////////////////////////////////////////////
   info = info.concat([
-    `Paying network fee of ${toText(calculateFee(txSize(tx), feeRate))} CKB`,
+    `Paying a Network Fee of ${toText(calculateFee(txSize(tx), feeRate))} CKB`,
   ]);
 
   return txInfoFrom({ tx, info });

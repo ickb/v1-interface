@@ -164,10 +164,10 @@ async function getL1State(walletConfig: WalletConfig) {
     );
 
     info = Object.freeze(
-      info.concat([
-        `Excluding ${notMature.length} withdrawal request${notMature.length > 1 ? "s" : ""}` +
-          `with maturity in ${wrWaitTime}`,
-      ]),
+      [
+        `Excluding ${notMature.length} Withdrawal Request${notMature.length > 1 ? "s" : ""}` +
+          ` with maturity in ${wrWaitTime}`,
+      ].concat(info),
     );
   }
 
@@ -192,7 +192,7 @@ async function getL1State(walletConfig: WalletConfig) {
       return addChange(txInfo, feeRate, walletConfig);
     }
 
-    return txInfoFrom({ error: "Nothing to convert" });
+    return txInfoFrom({ info, error: "Nothing to convert" });
   };
 
   return {
