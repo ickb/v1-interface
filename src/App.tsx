@@ -47,7 +47,9 @@ export default function App({ walletConfig }: { walletConfig: WalletConfig }) {
       <Dashboard
         {...{ isFrozen, walletConfig, ckbBalance, ickbUdtBalance, formSetMax }}
       />
-      <Form {...{ rawText: symbol + text, setRawText, tipHeader, isFrozen }} />
+      <Form
+        {...{ rawText: symbol + text, setRawText, amount, tipHeader, isFrozen }}
+      />
       <Action
         {...useDeferredValue({
           isCkb2Udt,

@@ -25,7 +25,7 @@ export default function Action({
     freeze(!txInfo.isEmpty);
   };
   const isFrozen = !frozenTxInfo.isEmpty;
-  const { data, isStale, isFetching, isPending } = useQuery(
+  const { data, isStale, isFetching } = useQuery(
     l1StateOptions(walletConfig, isFrozen),
   );
   const txInfo = isFrozen ? frozenTxInfo : data!.txBuilder(isCkb2Udt, amount);
@@ -33,8 +33,8 @@ export default function Action({
 
   return (
     <>
-      {isPending ? (
-        <p>Downloading the latest L1 Cell data, just for you. Hang tight...</p>
+      {txInfo.isEmpty ? (
+        <p>Downloading the latest L1 Cell data, just for you. Hang tight!</p>
       ) : (
         <div className={isFrozen ? "text-slate-100" : ""}>
           {txInfo.info

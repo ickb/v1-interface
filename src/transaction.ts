@@ -229,8 +229,8 @@ function convertAttempt(
         (amount * ratio.udtMultiplier) / ratio.ckbMultiplier;
     info = info.concat([
       `Creating a Limit Order for ${quantity > 0 ? "the remaining" : ""} ` +
-        `${toText(amount)} ${isCkb2Udt ? "CKB" : "iCKB"}` +
-        `  offering a Fee of ${toText(fee)} CKB`,
+        `${toText(amount)} ${isCkb2Udt ? "CKB" : "iCKB"}, ` +
+        `offering a Fee of ${toText(fee)} CKB`,
     ]);
   }
 

@@ -7,11 +7,13 @@ import { headerPlaceholder } from "./queries.ts";
 export default function Form({
   rawText,
   setRawText,
+  amount,
   tipHeader,
   isFrozen,
 }: {
   rawText: string;
   setRawText: (s: string) => void;
+  amount: bigint;
   tipHeader: I8Header;
   isFrozen: boolean;
 }) {
@@ -45,7 +47,7 @@ export default function Form({
             onChange={toggle}
             aria-label="Conversion direction"
           >
-            {isCkb2Udt ? "CKB ⇌ ICKB" : "ICKB ⇌ CKB"}
+            {isCkb2Udt ? "CKB" : "ICKB"}
           </ToggleButton>
         </Label>
       </TextField>
@@ -60,12 +62,29 @@ export default function Form({
           <span className="w-full">{isCkb2Udt ? "1 CKB" : "1 ICKB"}</span>
           <span className="px-4">⇌</span>
           <span className="w-full">
-            {isCkb2Udt
-              ? toText(ckb2Ickb(CKB, tipHeader)) + " ICKB"
-              : toText(ickb2Ckb(CKB, tipHeader)) + " CKB"}
+            {approxConversion(isCkb2Udt, CKB, tipHeader)}
           </span>
         </ToggleButton>
       )}
+      {amount > 0 ? (
+        <div className="text-center font-bold uppercase leading-relaxed tracking-wider">
+          {`~ ${approxConversion(isCkb2Udt, amount, tipHeader)}`}
+        </div>
+      ) : undefined}
     </>
   );
+}
+
+function approxConversion(
+  isCkb2Udt: boolean,
+  amount: bigint,
+  tipHeader: I8Header,
+) {
+  let [convertedAmount, unit] = isCkb2Udt
+    ? [ckb2Ickb(amount, tipHeader), "ICKB"]
+    : [ickb2Ckb(amount, tipHeader), "CKB"];
+  //Worst case scenario is a 0.1% fee for bot
+  convertedAmount -= convertedAmount / 1000n;
+
+  return `${toText(convertedAmount)} ${unit}`;
 }
