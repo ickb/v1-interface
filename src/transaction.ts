@@ -1,9 +1,12 @@
-import { TransactionSkeleton } from "@ckb-lumos/helpers";
+import {
+  TransactionSkeleton,
+  type TransactionSkeletonType,
+} from "@ckb-lumos/helpers";
 import {
   addCells,
   addCkbChange,
   binarySearch,
-  calculateFee,
+  calculateTxFee,
   txSize,
   type I8Cell,
   type I8Header,
@@ -248,13 +251,20 @@ export function addChange(
   }
 
   const { accountLock, addPlaceholders, config } = walletConfig;
-  let freeCkb, freeIckbUdt;
+  let txFee, freeCkb, freeIckbUdt;
   ({ tx, freeIckbUdt } = addIckbUdtChange(tx, accountLock, config));
-  ({ tx, freeCkb } = addCkbChange(
+  ({ tx, txFee, freeCkb } = addCkbChange(
     tx,
     accountLock,
-    feeRate,
-    addPlaceholders,
+    (txWithDummyChange: TransactionSkeletonType) => {
+      const baseFee = calculateTxFee(
+        txSize(addPlaceholders(txWithDummyChange)),
+        feeRate,
+      );
+      // Use a fee that is multiple of N=1249
+      const N = 1249n;
+      return ((baseFee + (N - 1n)) / N) * N;
+    },
     config,
   ));
 
@@ -273,10 +283,7 @@ export function addChange(
     });
   }
 
-  //return txFee from addCkbChange///////////////////////////////////////////////////////////
-  info = info.concat([
-    `Paying a Network Fee of ${toText(calculateFee(txSize(tx), feeRate))} CKB`,
-  ]);
+  info = info.concat([`Paying a Network Fee of ${toText(txFee)} CKB`]);
 
   return txInfoFrom({ tx, info });
 }

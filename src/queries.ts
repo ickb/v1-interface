@@ -144,13 +144,12 @@ async function getL1State(walletConfig: WalletConfig) {
   const ickbUdtBalance = ickbDelta(baseTx, config);
   const ickbUdtAvailable = ickbUdtBalance;
 
-  let ckbBalance = ckbDelta(baseTx, 0n, config);
+  let ckbBalance = ckbDelta(baseTx, config);
   const ckbAvailable = max((ckbBalance / CKB - 1000n) * CKB, 0n);
   let info = baseInfo;
   if (notMature.length > 0) {
     ckbBalance += ckbDelta(
       addWithdrawalRequestGroups(TransactionSkeleton(), notMature),
-      0n,
       config,
     );
 

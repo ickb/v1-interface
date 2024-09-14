@@ -101,6 +101,7 @@ function omnilockFrom({
   }
 
   async function signer(tx: TransactionSkeletonType) {
+    tx = addPlaceholders(tx);
     tx = prepareSigningEntries(tx, { config });
 
     const ethereum = getEthereum()!;
@@ -121,6 +122,7 @@ function omnilockFrom({
       }),
     );
     tx = addWitnessPlaceholder(tx, accountLock, signedWitness);
+
     return createTransactionFromSkeleton(tx);
   }
 
