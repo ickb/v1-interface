@@ -18,127 +18,120 @@ Done
 
 > The intro page needs a complete spelling and grammar check.
 
-TODO
+Done
 
-> “Here the Faucet for Nervos Testnet CKB.” State why they would use this. Yes, sometimes you have to be this obvious. “Visit the Nervos Testnet Faucet if you need some free testnet CKB to test with.”
+> “Here the Faucet for Nervos Testnet CKB.” State why they would use this. Yes, sometimes you have to be this obvious. “Visit the Nervos Testnet Faucet if you need some free testnet CKB to test with.”  [Jordan]
 
-TODO
+Done
 
-> Under “What is iCKB?“, give a very simple explanation of what iCKB does before you go into the part about how it works. Eg: Normally when you put your CKB in the Nervos DAO it is locked and inaccessible while it gains interest. When you lock your CKB in the Nervos DAO with iCKB it has the benefits of…
+> Under “What is iCKB?“, give a very simple explanation of what iCKB does before you go into the part about how it works. Eg: Normally when you put your CKB in the Nervos DAO it is locked and inaccessible while it gains interest. When you lock your CKB in the Nervos DAO with iCKB it has the benefits of…  [Jordan]
 
-TODO
-
-> “Jan and his team helped a lot in many different ways. They'll (likely) be also the ones conducting an informal audit on iCKB Scripts. I hope that they'll also be the ones deploying the scripts on mainnet.”
->
->- Internal audit, not informal.
->- Remove the sentence about deployment. I believe they have already declined.
-
-TODO
+Done
 
 > ![][image1]  
-> Text is cut off on sides and bottom. Make sure line height is sufficient for vertically holding the text, or enable overflow on the container. Don’t cut off on the left and right. Find a different way.
+> Text is cut off on sides and bottom. Make sure line height is sufficient for vertically holding the text, or enable overflow on the container. Don’t cut off on the left and right. Find a different way. [Jordan]
 
 TODO
 
 > ![][image2]  
-> Use “.toLocaleString()” to format the amount numbers.
+> Use “.toLocaleString()” to format the amount numbers. [Jordan]
 
 TODO
 
 > ![][image2]  
-> The address should fit entirely or cut off with expected sizes. Use CSS clamp, calc, or breakpoints to adjust the size to fit based on resolution. If you need to cut off on smaller resolutions, use something more common like a fixed 8…8 characters or 16…16 characters.
+> The address should fit entirely or cut off with expected sizes. Use CSS clamp, calc, or breakpoints to adjust the size to fit based on resolution. If you need to cut off on smaller resolutions, use something more common like a fixed 8…8 characters or 16…16 characters. [Jordan]
 
 TODO
 
 > ![][image3]  
-> The focus box on the amount looks strange. I’d recommend simply removing it.
+> The focus box on the amount looks strange. I’d recommend simply removing it. [Jordan]
 
 TODO
 
 > ![][image4]  
 > This information has a lot of good detail, but it does not tell you anything about efficiency or difficulties that may occur. From the standpoint of a user, a standard deposit vs a limit order doesn’t matter.
 >
-> One way to go about this is to have a simple view and an advanced view. In the simple view, hide all of the details that are not needed except amounts, rate, and any helpful information. Is there an optimal amount they should use to get a better deal or have it go through faster?
+> One way to go about this is to have a simple view and an advanced view. In the simple view, hide all of the details that are not needed except amounts, rate, and any helpful information. Is there an optimal amount they should use to get a better deal or have it go through faster? [Jordan]
 
 TODO
 
 > ![][image5]  
-> This adds another step and potential confusion for the user. They should not have to refresh manually. Automatically refresh it if it needs to for the amounts. If it needs to refresh again immediately before signing, do it automatically.
+> This adds another step and potential confusion for the user. They should not have to refresh manually. Automatically refresh it if it needs to for the amounts. If it needs to refresh again immediately before signing, do it automatically. [Jordan]
 
 TODO
 
 > ![][image6]  
-> This is a strange way to say it. I think you mean “waiting for transaction to confirm”.
+> This is a strange way to say it. I think you mean “waiting for transaction to confirm”. [Jordan]
 
 TODO
 
 > ![][image7]  
-> I see this in the console, but it’s not on the page. This isn’t very user friendly. Once it is confirmed it needs to display a confirmation message at the very least. I have something similar to this on [https://ckb.tools/sudt](https://ckb.tools/sudt).
+> I see this in the console, but it’s not on the page. This isn’t very user friendly. Once it is confirmed it needs to display a confirmation message at the very least. I have something similar to this on [https://ckb.tools/sudt](https://ckb.tools/sudt). [Jordan]
 
 TODO
 
 > ![][image8]  
-> I don’t really understand this. Melting a completed order? Is this an open limit order?
+> I don’t really understand this. Melting a completed order? Is this an open limit order? [Jordan]
 
 TODO
 
 > ![][image9]  
-> Could use an info bubble to simply explain the exchange rate and how it is always decreasing slowly as the value of iCKB continues to rise. This should be extremely high level. The reason is you don’t want the average user, who didn’t read anything else, to think that the rate might be “bad” and search for a better time to do it. The rate is calculated so it’s never a bad time.
+> Could use an info bubble to simply explain the exchange rate and how it is always decreasing slowly as the value of iCKB continues to rise. This should be extremely high level. The reason is you don’t want the average user, who didn’t read anything else, to think that the rate might be “bad” and search for a better time to do it. The rate is calculated so it’s never a bad time. [Jordan]
 
 TODO
 
 > ![][image10]  
-> When hovering the mouse over the input field use the text cursor.
+> When hovering the mouse over the input field use the text cursor. [Jordan]
 
 TODO
 
 > ![][image11]  
-> When the rate changes as a result of an automatic refresh, it is beneficial to give an effect to the text to show it changed. Sometimes this means giving it a bright shadow that fades out in a second. Something like that.
+> When the rate changes as a result of an automatic refresh, it is beneficial to give an effect to the text to show it changed. Sometimes this means giving it a bright shadow that fades out in a second. Something like that. [Jordan]
 
 TODO
 
 > ![][image12]  
-> Use your horizontal space better on mobile devices. This usually means 10px padding around the sides.
+> Use your horizontal space better on mobile devices. This usually means 10px padding around the sides. [Jordan]
 
 TODO
 
 > ![][image13]  
-> Make sure you don’t have text overflows on things like buttons on mobile devices.
+> Make sure you don’t have text overflows on things like buttons on mobile devices. [Jordan]
 
 TODO
 
 > ![][image14]  
-> It will not let me type in a number greater than 0\. It is not clear on why. I see I have 1000 CKB.
+> It will not let me type in a number greater than 0\. It is not clear on why. I see I have 1000 CKB. [Jordan]
 
 TODO
 
 > ![][image15]  
-> Same as above going on here. I can’t exchange and there is a strange message about maturity. The user will not be clear on what is going on, or more importantly, what they need to do.
+> Same as above going on here. I can’t exchange and there is a strange message about maturity. The user will not be clear on what is going on, or more importantly, what they need to do. [Jordan]
 
 TODO
 
 > ![][image16]  
-> Received this message when sending transactions too quickly. If this is expected, that’s ok, but the user needs to be given an indication of some kind that it doesn’t work so they can resubmit.
+> Received this message when sending transactions too quickly. If this is expected, that’s ok, but the user needs to be given an indication of some kind that it doesn’t work so they can resubmit. [Jordan]
 
 TODO
 
 > ![][image17]  
-> When there is no amount typed in I see this. I believe this is indicating I have an open limit order that isn’t filled and this will cancel it? There is no place to see open orders I have that are pending, which is confusing.
+> When there is no amount typed in I see this. I believe this is indicating I have an open limit order that isn’t filled and this will cancel it? There is no place to see open orders I have that are pending, which is confusing. [Jordan]
 
 TODO
 
 > ![][image18]  
-> A fee of 99.79 CKB is significant. Is this purely a fee or does this include the refundable cell cost? If it’s refundable it needs to be indicated.
+> A fee of 99.79 CKB is significant. Is this purely a fee or does this include the refundable cell cost? If it’s refundable it needs to be indicated. [Jordan]
 
 TODO
 
 > ![][image19]  
-> It is very difficult to select the number to delete it or copy it. Selecting the field to paste also seems problematic.
+> It is very difficult to select the number to delete it or copy it. Selecting the field to paste also seems problematic. [Jordan]
 
 TODO
 
 > ![][image20]  
-> It looks like the button text might be selectable, which puts little corners outside the round corners. Disable text selection.
+> It looks like the button text might be selectable, which puts little corners outside the round corners. Disable text selection. [Jordan]
 
 TODO
 

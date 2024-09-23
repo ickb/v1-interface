@@ -27,12 +27,14 @@
       </h1>
       <p>
         This is a iCKB Testnet DApp, a place where you can safely try out the
-        iCKB DApp and give feedback for how you would like to see its improved.
+        iCKB DApp and give feedback for how you would like to see it improved.
+        Visit the
         <a
           href="https://faucet.nervos.org/"
           class="underline decoration-amber-400 decoration-wavy underline-offset-4"
-          >Here the Faucet for Nervos Testnet CKB</a
-        >.
+          >Nervos Testnet Faucet</a
+        >
+        if you need some free testnet CKB to test with.
       </p>
       <h2
         class="items-center justify-center pb-4 pt-8 text-3xl font-medium text-slate-300"
@@ -46,7 +48,7 @@
         Yes, connect Metamask
       </button>
       <a
-        href="https://talk.nervos.org/t/ama-everything-ickb/7871"
+        href="https://t.me/NervosNation/307406"
         class="text-s inline-flex h-12 w-full items-center justify-center rounded border-2 border-amber-400 font-bold uppercase leading-relaxed tracking-wider text-amber-400"
       >
         No, I'll feedback the dev
@@ -138,83 +140,78 @@
       <h2
         class="items-center justify-center pb-4 pt-8 text-3xl font-medium text-slate-300"
       >
-        What is iCKB?
+        What is NervosDAO?
       </h2>
       <p>
-        iCKB is a protocol that
+        NervosDAO is a L1 Script that allows users to deposit their CKB and earn
+        interests from
+        <a
+          href="https://www.nervos.org/knowledge-base/understanding_nervos_ckb_issuance_model"
+          class="underline decoration-amber-400 decoration-wavy underline-offset-4"
+          >secondary issuance compensation</a
+        >. When depositing CKB in NervosDAO, these CKB are normally locked away
+        and inaccessible during the ~30 days cycle, so they are illiquid. iCKB
+        protocol
         <a
           href="https://www.youtube.com/watch?v=CcFFuenup38&t=781s"
           class="underline decoration-amber-400 decoration-wavy underline-offset-4"
           >aims</a
         >
-        to solve the illiquidity problem of the NervosDAO by tokenizing
-        NervosDAO deposits into a liquid iCKB token.
+        to solve this.
       </p>
+      <h2
+        class="items-center justify-center pb-4 pt-8 text-3xl font-medium text-slate-300"
+      >
+        What is iCKB?
+      </h2>
       <p>
-        The iCKB protocol owns all the iCKB deposits and maintains a
+        iCKB is a smart wrapper of NervosDAO. When depositing with the iCKB
+        protocol, the protocols mints iCKB tokens representing the deposits and
+        it takes control of the deposits, maintaining a
         <a
-          href="https://github.com/ickb/proposal?tab=readme-ov-file#enter-ickb"
+          href="https://github.com/ickb/proposal#enter-ickb"
           class="underline decoration-amber-400 decoration-wavy underline-offset-4"
           >pool</a
         >
-        of them, allowing anyone to use anyone else's deposit to exit the
-        NervosDAO once it's mature.
+        of them.
       </p>
       <p>
-        iCKB incentivize a
-        <a
-          href="https://github.com/ickb/proposal?tab=readme-ov-file#standard-deposit"
-          class="underline decoration-amber-400 decoration-wavy underline-offset-4"
-          >standard deposit size</a
-        >
-        of 100,000 iCKB to improve deposit fungibility and prevent certain types
-        of attacks.
+        Holding the iCKB token is roughly equivalent to a traditional NervosDAO
+        deposit, no re-staking needed, but with the additional benefit that iCKB
+        withdrawals are fast as they can withdraw from the iCKB deposits closest
+        to maturity, bypassing the NervosDAO ~30 days cycle.
       </p>
-      <p>
-        The
-        <a
-          href="https://github.com/ickb/proposal/?tab=readme-ov-file#ickbckb-exchange-rate-idea"
-          class="underline decoration-amber-400 decoration-wavy underline-offset-4"
-          >iCKB/CKB exchange rate</a
-        >
-        is designed to be deterministic, tracking the inflation rate of CKB as
-        defined by the Nervos DAO compensation formula.
-      </p>
+      <h2
+        class="items-center justify-center pb-4 pt-8 text-3xl font-medium text-slate-300"
+      >
+        Has iCKB been audited?
+      </h2>
       <p>
         The
         <a
-          href="https://github.com/ickb/proposal/?tab=readme-ov-file#deposit"
+          href="https://github.com/ickb/v1-core/tree/master/scripts"
           class="underline decoration-amber-400 decoration-wavy underline-offset-4"
-          >deposit process</a
+          >iCKB L1 Scripts</a
         >
-        is split into two phases - the first locks CKB and issues a receipt, the
-        second converts the receipt into iCKB tokens.
-      </p>
-      <p>
-        The
+        have been both internally reviewed by individuals with deep experience
+        in Nervos L1 and
         <a
-          href="https://github.com/ickb/proposal/?tab=readme-ov-file#withdrawal"
+          href="http://scalebit.xyz/reports/20240911-ICKB-Final-Audit-Report.pdf"
           class="underline decoration-amber-400 decoration-wavy underline-offset-4"
-          >withdrawal process</a
+          >externally audited</a
         >
-        also has two phases - burning iCKB/receipts to request withdrawal, then
-        completing the withdrawal from the Nervos DAO.
+        by the Scalebit team, an internationally recognized blockchain security
+        team.
       </p>
       <p>
-        Additionally, a
+        As per usual practice, the Web DApp code has not been audited. Feel free
+        to review its
         <a
-          href="https://github.com/ickb/proposal/?tab=readme-ov-file#limit-order-script"
+          href="https://github.com/ickb/v1-interface"
           class="underline decoration-amber-400 decoration-wavy underline-offset-4"
-          >limit order script</a
+          >open source code</a
         >
-        is used to overcome the limitations of the underlying NervosDAO and iCKB
-        protocols, allowing for more flexible and user-friendly experiences
-        within the iCKB ecosystem.
-      </p>
-      <p>
-        The limit order process is split into three phases - a user mint the
-        order, then a bot match the order and at the end the user melt the order
-        to collect his assets.
+        before using the DApp.
       </p>
       <h2
         class="items-center justify-center pb-4 pt-8 text-3xl font-medium text-slate-300"
@@ -222,43 +219,25 @@
         Who is behind iCKB?
       </h2>
       <p>
-        A random developer, going by the pseudonym Phroi. The best way to
-        interact with me is in a written format, English is not my native
-        language. A bit on the over-thinker side, so much that I'm unwillingly
-        finding vulnerabilities in other people work. Also I like to relax
-        watching subbed anime at 2x, especially Isekai and similar.
+        A developer, going by the pseudonym Phroi. I'd like to spend my time
+        working on projects giving meaning to my life and improving the life of
+        users. Win-win situations. I'll present iCKB at
         <a
-          href="https://x.com/RunningCKB/status/1811885395866501248"
+          href="https://www.commonknowledge.cc/"
           class="underline decoration-amber-400 decoration-wavy underline-offset-4"
-          >I'll be at Chiang Mai CKCON, feel free to come and say hi!!</a
-        >
+          >CKCON 2024</a
+        >, feel free to come and say hi!!
       </p>
       <p>
-        The Nervos Foundation who sponsored the iCKB project in a way that
-        enabled its development as a public good. iCKB would not have happened
-        without their help, especially Jordan and Matt. In these years Jordan
-        personally invested a lot of time and energy in iCKB, supporting me in
-        every way he could. Thank you a lot!!
+        The Nervos Foundation who sponsored the development of iCKB project as a
+        public good. iCKB would not have happened without their help, especially
+        Jordan and Matt. In these years Jordan personally invested a lot of time
+        and energy, supporting iCKB in every way he could. Thank you a lot!!
       </p>
       <p>
-        Many people in the Nervos ecosystem helped out iCKB directly or
-        indirectly, I'm especially grateful to Homura. iCKB DApp would not be
-        here without
-        <a
-          href="https://github.com/ckb-js/lumos/issues?q=is%3Aissue+author%3Aphroi+is%3Aclosed"
-          class="underline decoration-amber-400 decoration-wavy underline-offset-4"
-          >Lumos and his continuos support</a
-        >.
-      </p>
-      <p>
-        Jan and his team helped a lot in many different ways. They'll (likely)
-        be also the ones conducting an informal audit on iCKB Scripts. I hope
-        that they'll also be the ones deploying the scripts on mainnet.
-      </p>
-      <p>
-        Nervos Nation who will (likely) host the final mainnet DApp, making sure
-        that the DApp is safe and also organize a Reddit AMA for iCKB. They are
-        a cool bunch. Nervos Community is lucky to have them.
+        Many Nervos ecosystem members who helped out iCKB directly or
+        indirectly, I'm especially grateful to Jan & his team, Homura and Nervos
+        Nation.
       </p>
     </div>
   </body>
