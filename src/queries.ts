@@ -10,6 +10,7 @@ import {
   I8Header,
   capacitySifter,
   ckbDelta,
+  hex,
   i8ScriptPadding,
   lockExpanderFrom,
   maturityDiscriminator,
@@ -34,7 +35,7 @@ import {
   type WalletConfig,
 } from "./utils.ts";
 import { addChange, base, convert } from "./transaction.ts";
-import type { Header, HexNumber } from "@ckb-lumos/base";
+import type { Cell, Header, HexNumber, Transaction } from "@ckb-lumos/base";
 import { parseAbsoluteEpochSince } from "@ckb-lumos/base/lib/since";
 
 export function l1StateOptions(walletConfig: WalletConfig, isFrozen: boolean) {
@@ -79,18 +80,20 @@ async function getL1State(walletConfig: WalletConfig) {
     wanted.add(blockNumber);
     return headerPlaceholder;
   };
-  const { notIckbs } = ickbSifter(
-    mixedCells,
-    expander,
-    deferredGetHeader,
-    config,
-  );
+  ickbSifter(mixedCells, expander, deferredGetHeader, config);
   const headersPromise = getHeadersByNumber(wanted, walletConfig);
 
+  // Prefetch txs outputs
+  const wantedTxsOutputs = new Set<string>();
+  const deferredGetTxsOutputs = (txHash: string) => {
+    wantedTxsOutputs.add(txHash);
+    return [];
+  };
+  orderSifter(mixedCells, expander, deferredGetTxsOutputs, config);
+  const txsOutputsPromise = getTxsOutputs(wantedTxsOutputs, walletConfig);
+
   // Do potentially costly operations
-  const { capacities, notCapacities } = capacitySifter(notIckbs, expander);
-  const { myOrders } = orderSifter(notCapacities, expander, config);
-  const hasMatchable = myOrders.some((o) => o.info.isMatchable);
+  const { capacities, notCapacities } = capacitySifter(mixedCells, expander);
 
   // Await for headers
   const headers = await headersPromise;
@@ -101,8 +104,9 @@ async function getL1State(walletConfig: WalletConfig) {
     receipts,
     withdrawalRequestGroups,
     ickbPool: pool,
+    notIckbs,
   } = ickbSifter(
-    mixedCells,
+    notCapacities,
     expander,
     (blockNumber) => headers.get(blockNumber)!,
     config,
@@ -128,6 +132,19 @@ async function getL1State(walletConfig: WalletConfig) {
       .sort((a, b) => a.i - b.i)
       .map((a) => a.d);
   }
+
+  // Await for txsOutputs
+  const txsOutputs = await txsOutputsPromise;
+
+  // Sift through Orders
+  const { myOrders } = orderSifter(
+    notIckbs,
+    expander,
+    (txHash) => txsOutputs.get(txHash) ?? [],
+    config,
+  );
+
+  const hasMatchable = myOrders.some((o) => o.info.isMatchable);
 
   const txConsumesIntermediate =
     mature.length > 0 || receipts.length > 0 || myOrders.length > 0;
@@ -235,6 +252,59 @@ async function getMixedCells(walletConfig: WalletConfig) {
       )
     ).flat(),
   );
+}
+
+async function getTxsOutputs(
+  txHashes: Set<string>,
+  walletConfig: WalletConfig,
+) {
+  const { chain, rpc, queryClient } = walletConfig;
+
+  const known: Readonly<Map<HexNumber, Readonly<Cell[]>>> =
+    queryClient.getQueryData([chain, "txsOutputs"]) ?? Object.freeze(new Map());
+
+  const result = new Map<string, Readonly<Cell[]>>();
+  const batch = rpc.createBatchRequest();
+  for (const txHash of txHashes) {
+    const outputs = known.get(txHash);
+    if (outputs !== undefined) {
+      result.set(txHash, outputs);
+      continue;
+    }
+    batch.add("getTransaction", txHash);
+  }
+
+  if (batch.length === 0) {
+    return known;
+  }
+
+  for (const tx of (await batch.exec()).map(
+    ({ transaction: tx }: { transaction: Transaction }) => tx,
+  )) {
+    result.set(
+      tx.hash!,
+      Object.freeze(
+        tx.outputs.map(({ lock, type, capacity }, index) =>
+          Object.freeze(<Cell>{
+            cellOutput: Object.freeze({
+              lock: Object.freeze(lock),
+              type: Object.freeze(type),
+              capacity: Object.freeze(capacity),
+            }),
+            data: Object.freeze(tx.outputsData[index] ?? "0x"),
+            outPoint: Object.freeze({
+              txHash: tx.hash!,
+              index: hex(index),
+            }),
+          }),
+        ),
+      ),
+    );
+  }
+
+  const frozenResult = Object.freeze(result);
+  queryClient.setQueryData([chain, "txsOutputs"], frozenResult);
+  return frozenResult;
 }
 
 async function getHeadersByNumber(
