@@ -6,7 +6,7 @@ import { getIckbScriptConfigs } from "@ickb/v1-core";
 import { chainConfigFrom } from "@ickb/lumos-utils";
 import { prefetchData } from "./queries.ts";
 
-const rootConfigPromise = chainConfigFrom(
+const testnetRootConfigPromise = chainConfigFrom(
   "testnet",
   undefined,
   true,
@@ -17,8 +17,21 @@ const rootConfigPromise = chainConfigFrom(
   return rootConfig;
 });
 
-export async function startApp() {
-  const rootConfig = await rootConfigPromise;
+const mainnetRootConfigPromise = chainConfigFrom(
+  "mainnet",
+  undefined,
+  true,
+  getIckbScriptConfigs,
+).then((chainConfig) => {
+  const rootConfig = { ...chainConfig, queryClient: new QueryClient() };
+  prefetchData(rootConfig);
+  return rootConfig;
+});
+
+export async function startApp(chain: "testnet" | "mainnet") {
+  const rootConfig = await (chain === "mainnet"
+    ? mainnetRootConfigPromise
+    : testnetRootConfigPromise);
   const rootElement = document.getElementById("app")!;
   const root = createRoot(rootElement);
   rootElement.textContent = "";

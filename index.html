@@ -2,11 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>iCKB Testnet DApp</title>
+    <title>iCKB DApp</title>
     <link rel="icon" href="src/assets/ickb_logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <meta property="og:title" content="iCKB Testnet DApp" />
+    <meta property="og:title" content="iCKB DApp" />
     <meta property="og:type" content="website" />
     <meta
       property="og:description"
@@ -22,19 +22,14 @@
         class="flex flex-row items-center justify-center pb-4 text-5xl font-medium text-slate-200"
       >
         <span class="mr-2 text-5xl text-amber-400">{</span>
-        <span>iCKB Testnet DApp</span>
+        <span>iCKB DApp</span>
         <span class="ml-2 text-5xl text-amber-400">}</span>
       </h1>
       <p>
-        This is a iCKB Testnet DApp, a place where you can safely try out the
-        iCKB DApp and give feedback for how you would like to see it improved.
-        Visit the
-        <a
-          href="https://faucet.nervos.org/"
-          class="underline decoration-amber-400 decoration-wavy underline-offset-4"
-          >Nervos Testnet Faucet</a
-        >
-        if you need some free testnet CKB to test with.
+        This is the iCKB DApp a way to convert between CKB & iCKB, a liquid
+        representation of deposits in the iCKB protocol. It allows for fast
+        withdrawals while maintaining the benefits of traditional NervosDAO
+        deposits without the need for re-staking.
       </p>
       <h2
         class="items-center justify-center pb-4 pt-8 text-3xl font-medium text-slate-300"
@@ -42,17 +37,33 @@
         Would you like to try out the DApp?
       </h2>
       <button
-        id="metamask"
+        id="mainnet"
         class="text-s h-12 w-full rounded border-2 border-amber-400 font-bold uppercase leading-relaxed tracking-wider text-amber-400 disabled:opacity-50"
       >
-        Yes, connect Metamask
+        Yes, connect Metamask to Mainnet 🚧
+      </button>
+      <button
+        id="testnet"
+        class="text-s h-12 w-full rounded border-2 border-amber-400 font-bold uppercase leading-relaxed tracking-wider text-amber-400 disabled:opacity-50"
+      >
+        Yes, connect Metamask to Testnet ☕️
       </button>
       <a
         href="https://t.me/NervosNation/307406"
         class="text-s inline-flex h-12 w-full items-center justify-center rounded border-2 border-amber-400 font-bold uppercase leading-relaxed tracking-wider text-amber-400"
       >
-        No, I'll feedback the dev
+        No, I'll feedback the dev 📝
       </a>
+      <p>
+        Feel free to give feedback for how you would like to see it improved.
+        Also visit the
+        <a
+          href="https://faucet.nervos.org/"
+          class="underline decoration-amber-400 decoration-wavy underline-offset-4"
+          >Nervos Testnet Faucet</a
+        >
+        if you need some free testnet CKB to test with.
+      </p>
       <div id="progress" class="hidden h-2 w-full overflow-hidden rounded">
         <div
           class="size-full animate-pulse bg-amber-400 [animation-delay:-3.00s] [animation-duration:6s]"
