@@ -1,6 +1,5 @@
 import {
   TransactionSkeleton,
-  createTransactionFromSkeleton,
   encodeToAddress,
   type TransactionSkeletonType,
 } from "@ckb-lumos/helpers";
@@ -8,6 +7,7 @@ import { queryOptions } from "@tanstack/react-query";
 import {
   CKB,
   I8Header,
+  calculateTxFee,
   capacitySifter,
   ckbDelta,
   hex,
@@ -17,6 +17,7 @@ import {
   max,
   shuffle,
   since,
+  txSize,
 } from "@ickb/lumos-utils";
 import {
   addWithdrawalRequestGroups,
@@ -66,7 +67,7 @@ export function l1StateOptions(walletConfig: WalletConfig, isFrozen: boolean) {
 }
 
 async function getL1State(walletConfig: WalletConfig) {
-  const { rpc, config, expander } = walletConfig;
+  const { rpc, config, expander, getTxSizeOverhead } = walletConfig;
 
   const mixedCells = await getMixedCells(walletConfig);
 
@@ -157,6 +158,7 @@ async function getL1State(walletConfig: WalletConfig) {
     receipts,
     wrGroups: mature,
   });
+  const txSizeOverheadPromise = getTxSizeOverhead(baseTx);
 
   const ickbUdtBalance = ickbDelta(baseTx, config);
   const ickbUdtAvailable = ickbUdtBalance;
@@ -187,10 +189,20 @@ async function getL1State(walletConfig: WalletConfig) {
     );
   }
 
-  const feeRate = await feeRatePromise;
+  const [txSizeOverhead, feeRate] = await Promise.all([
+    txSizeOverheadPromise,
+    feeRatePromise,
+  ]);
+
+  const calculateFee = (tx: TransactionSkeletonType) => {
+    const baseFee = calculateTxFee(txSize(tx) + txSizeOverhead, feeRate);
+    // Use a fee that is multiple of N=1249
+    const N = 1249n;
+    return ((baseFee + (N - 1n)) / N) * N;
+  };
 
   const txBuilder = (isCkb2Udt: boolean, amount: bigint) => {
-    const txInfo = txInfoFrom({ tx: baseTx, info });
+    const txInfo = txInfoFrom({ tx: baseTx, calculateFee, info });
 
     if (amount > 0n) {
       return convert(
@@ -199,13 +211,12 @@ async function getL1State(walletConfig: WalletConfig) {
         amount,
         ickbPool,
         tipHeader,
-        feeRate,
         walletConfig,
       );
     }
 
     if (txConsumesIntermediate) {
-      return addChange(txInfo, feeRate, walletConfig);
+      return addChange(txInfo, walletConfig);
     }
 
     return txInfoFrom({ info, error: "Nothing to convert" });
@@ -226,25 +237,24 @@ export async function prefetchData(rootConfig: RootConfig) {
   const { queryClient } = rootConfig;
   const dummy: WalletConfig = {
     ...rootConfig,
-    accountLock: i8ScriptPadding,
+    accountLocks: [i8ScriptPadding],
     address: encodeToAddress(i8ScriptPadding, rootConfig),
     expander: lockExpanderFrom(i8ScriptPadding),
-    addPlaceholders: (tx: TransactionSkeletonType) => tx,
-    signer: (tx: TransactionSkeletonType) =>
-      Promise.resolve(createTransactionFromSkeleton(tx)),
+    getTxSizeOverhead: () => Promise.resolve(0),
+    sendSigned: () => Promise.resolve("0x0"),
   };
 
   return queryClient.prefetchQuery(l1StateOptions(dummy, false));
 }
 
 async function getMixedCells(walletConfig: WalletConfig) {
-  const { accountLock, config, rpc } = walletConfig;
+  const { accountLocks, config, rpc } = walletConfig;
 
   return Object.freeze(
     (
       await Promise.all(
         [
-          accountLock,
+          ...accountLocks,
           ickbLogicScript(config),
           ownedOwnerScript(config),
           limitOrderScript(config),

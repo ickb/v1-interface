@@ -79,10 +79,10 @@ async function transact(
   formReset: () => void,
   walletConfig: WalletConfig,
 ) {
-  const { rpc, signer } = walletConfig;
+  const { rpc, sendSigned } = walletConfig;
   try {
     freezeTxInfo(txInfo);
-    const txHash = await rpc.sendTransaction(await signer(txInfo.tx));
+    const txHash = await sendSigned(txInfo.tx);
     let status = "pending";
     while (status === "pending" || status === "proposed") {
       await new Promise((r) => setTimeout(r, 10000));

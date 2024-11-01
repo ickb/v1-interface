@@ -1,4 +1,3 @@
-import { encodeToAddress } from "@ckb-lumos/helpers";
 import type { WalletConfig } from "./utils.ts";
 import { Button } from "react-aria-components";
 import { CKB } from "@ickb/lumos-utils";
@@ -28,8 +27,7 @@ export function Dashboard({
   formSetMax: (direction: boolean) => void;
   walletConfig: WalletConfig;
 }) {
-  const { chain, config, accountLock } = walletConfig;
-  const address = encodeToAddress(accountLock, { config });
+  const { chain, address } = walletConfig;
   const hl = Math.floor(address.length / 2);
   const href = `https://${chain !== "mainnet" ? "pudge." : ""}explorer.nervos.org/address/${address}`;
   return (

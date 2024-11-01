@@ -1,13 +1,8 @@
-import {
-  TransactionSkeleton,
-  type TransactionSkeletonType,
-} from "@ckb-lumos/helpers";
+import { TransactionSkeleton } from "@ckb-lumos/helpers";
 import {
   addCells,
   addCkbChange,
   binarySearch,
-  calculateTxFee,
-  txSize,
   type I8Cell,
   type I8Header,
 } from "@ickb/lumos-utils";
@@ -97,7 +92,6 @@ export function convert(
   amount: bigint,
   deposits: Readonly<ExtendedDeposit[]>,
   tipHeader: I8Header,
-  feeRate: bigint,
   walletConfig: WalletConfig,
 ) {
   if (txInfo.error !== "") {
@@ -146,7 +140,6 @@ export function convert(
         depositAmount,
         ickbPool,
         tipHeader,
-        feeRate,
         walletConfig,
       ));
   };
@@ -162,15 +155,14 @@ function convertAttempt(
   depositAmount: bigint,
   ickbPool: Readonly<MyExtendedDeposit[]>,
   tipHeader: I8Header,
-  feeRate: bigint,
   walletConfig: WalletConfig,
 ) {
-  let { tx, info, error } = txInfo;
+  let { tx, calculateFee, info, error } = txInfo;
   if (error !== "") {
     return txInfo;
   }
 
-  const { accountLock, config } = walletConfig;
+  const { accountLocks, config } = walletConfig;
   if (quantity > 0) {
     if (isCkb2Udt) {
       amount -= depositAmount * BigInt(quantity);
@@ -180,7 +172,7 @@ function convertAttempt(
         });
       }
       tx = ickbDeposit(tx, quantity, depositAmount, config);
-      tx = addReceiptDepositsChange(tx, accountLock, config);
+      tx = addReceiptDepositsChange(tx, accountLocks[0], config);
       info = info.concat([]);
       info = info.concat([
         `Creating ${quantity} standard deposit${quantity > 1 ? "s" : ""} ` +
@@ -199,7 +191,7 @@ function convertAttempt(
       ickbPool = ickbPool.slice(0, quantity);
       const deposits = ickbPool.map((d) => d.deposit);
       tx = ickbRequestWithdrawalFrom(tx, deposits, config);
-      tx = addOwnedWithdrawalRequestsChange(tx, accountLock, config);
+      tx = addOwnedWithdrawalRequestsChange(tx, accountLocks[0], config);
       const waitTime = maxWaitTime(
         ickbPool.map((d) => d.estimatedMaturity),
         tipHeader,
@@ -214,7 +206,7 @@ function convertAttempt(
   if (amount > 0n) {
     tx = orderMint(
       tx,
-      accountLock,
+      accountLocks[0],
       config,
       isCkb2Udt ? amount : undefined,
       isCkb2Udt ? undefined : amount,
@@ -237,34 +229,22 @@ function convertAttempt(
     ]);
   }
 
-  return addChange(txInfoFrom({ tx, info }), feeRate, walletConfig);
+  return addChange(txInfoFrom({ tx, calculateFee, info }), walletConfig);
 }
 
-export function addChange(
-  txInfo: TxInfo,
-  feeRate: bigint,
-  walletConfig: WalletConfig,
-) {
-  let { tx, info, error } = txInfo;
+export function addChange(txInfo: TxInfo, walletConfig: WalletConfig) {
+  let { tx, calculateFee, info, error } = txInfo;
   if (error !== "") {
     return txInfo;
   }
 
-  const { accountLock, addPlaceholders, config } = walletConfig;
+  const { accountLocks, config } = walletConfig;
   let txFee, freeCkb, freeIckbUdt;
-  ({ tx, freeIckbUdt } = addIckbUdtChange(tx, accountLock, config));
+  ({ tx, freeIckbUdt } = addIckbUdtChange(tx, accountLocks[0], config));
   ({ tx, txFee, freeCkb } = addCkbChange(
     tx,
-    accountLock,
-    (txWithDummyChange: TransactionSkeletonType) => {
-      const baseFee = calculateTxFee(
-        txSize(addPlaceholders(txWithDummyChange)),
-        feeRate,
-      );
-      // Use a fee that is multiple of N=1249
-      const N = 1249n;
-      return ((baseFee + (N - 1n)) / N) * N;
-    },
+    accountLocks[0],
+    calculateFee,
     config,
   ));
 

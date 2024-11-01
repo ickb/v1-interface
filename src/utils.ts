@@ -1,4 +1,4 @@
-import type { Cell, HexString, Transaction } from "@ckb-lumos/base";
+import type { Cell, HexString } from "@ckb-lumos/base";
 import {
   TransactionSkeleton,
   type TransactionSkeletonType,
@@ -20,10 +20,10 @@ export interface RootConfig extends ChainConfig {
 
 export interface WalletConfig extends RootConfig {
   address: HexString;
-  accountLock: I8Script;
+  accountLocks: I8Script[];
   expander: (c: Cell) => I8Script | undefined;
-  addPlaceholders: (tx: TransactionSkeletonType) => TransactionSkeletonType;
-  signer: (tx: TransactionSkeletonType) => Promise<Transaction>;
+  getTxSizeOverhead: (tx: TransactionSkeletonType) => Promise<number>;
+  sendSigned: (tx: TransactionSkeletonType) => Promise<`0x${string}`>;
 }
 
 export function symbol2Direction(s: string) {
@@ -97,22 +97,26 @@ export function maxWaitTime(ee: EpochSinceValue[], tipHeader: I8Header) {
   return `${String(1 + Math.ceil(epochs / 6))} days`;
 }
 
-export type TxInfo = {
-  tx: TransactionSkeletonType;
-  info: readonly string[];
-  error: string;
-  isEmpty: boolean;
-};
+export type TxInfo = ReturnType<typeof txInfoFrom>;
 
 export function txInfoFrom({
   tx = TransactionSkeleton(),
+  calculateFee = (_: TransactionSkeletonType): bigint => {
+    throw Error("calculateFee not populated");
+  },
   info = <readonly string[]>[],
   error = "",
-}): Readonly<TxInfo> {
+}) {
   if (error.length > 0) {
     tx = TransactionSkeleton();
   }
 
   const isEmpty = !isPopulated(tx) && info.length === 0 && error.length === 0;
-  return Object.freeze({ tx, info: Object.freeze(info), error, isEmpty });
+  return Object.freeze({
+    tx,
+    calculateFee,
+    info: Object.freeze(info),
+    error,
+    isEmpty,
+  });
 }
