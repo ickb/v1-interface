@@ -12,18 +12,18 @@
       property="og:description"
       content="An interface for interacting with iCKB scripts."
     />
-    <script type="module" crossorigin src="/assets/index-CUO7hFje.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-DKwhqua7.css">
+    <script type="module" crossorigin src="/assets/index-BLzksjAy.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-WywPawFA.css">
   </head>
   <body
-    class="mx-auto max-w-3xl rounded bg-zinc-900 text-slate-300 mix-blend-hard-light shadow-2xl shadow-slate-800"
+    class="mx-auto max-w-3xl cursor-default rounded bg-zinc-900 text-slate-300 mix-blend-hard-light shadow-2xl shadow-slate-800"
   >
-    <div id="app" class="m-4 flex flex-col space-y-4 rounded p-8">
+    <div id="app" class="m-4 flex flex-col space-y-4 p-8">
       <h1
         class="flex flex-row items-center justify-center pb-4 text-5xl font-medium text-slate-200"
       >
         <span class="mr-2 text-5xl text-amber-400">{</span>
-        <span>iCKB DApp</span>
+        <span>iCKB</span>
         <span class="ml-2 text-5xl text-amber-400">}</span>
       </h1>
       <p>
@@ -33,38 +33,34 @@
         deposits without the need for re-staking.
       </p>
       <h2
-        class="items-center justify-center pb-4 pt-8 text-3xl font-medium text-slate-300"
+        class="items-center justify-center pt-8 pb-4 text-3xl font-medium text-slate-300"
       >
         Would you like to try out the DApp?
       </h2>
       <button
         id="JoyID_mainnet"
-        class="text-s h-12 w-full rounded border-2 border-amber-400 font-bold uppercase leading-relaxed tracking-wider text-amber-400 disabled:opacity-50"
+        class="text-s min-h-12 w-full cursor-pointer rounded border-2 border-amber-400 leading-relaxed font-bold tracking-wider text-amber-400 uppercase disabled:opacity-50"
       >
         Yes, connect JoyID to Mainnet 🚧 (experimental)
       </button>
       <button
         id="JoyID_testnet"
-        class="text-s h-12 w-full rounded border-2 border-amber-400 font-bold uppercase leading-relaxed tracking-wider text-amber-400 disabled:opacity-50"
+        class="text-s min-h-12 w-full cursor-pointer rounded border-2 border-amber-400 leading-relaxed font-bold tracking-wider text-amber-400 uppercase disabled:opacity-50"
       >
         Yes, connect JoyID to Testnet ☕️
       </button>
       <a
+        href="https://www.nervdao.com"
+        class="text-s inline-flex min-h-12 w-full items-center justify-center rounded border-2 border-amber-400 text-center leading-relaxed font-bold tracking-wider text-amber-400 uppercase"
+      >
+        No, I'd rather use NervDAO 👀
+      </a>
+      <a
         href="https://t.me/NervosNation/307406"
-        class="text-s inline-flex h-12 w-full items-center justify-center rounded border-2 border-amber-400 font-bold uppercase leading-relaxed tracking-wider text-amber-400"
+        class="text-s inline-flex min-h-12 w-full items-center justify-center rounded border-2 border-amber-400 text-center leading-relaxed font-bold tracking-wider text-amber-400 uppercase"
       >
         No, I'll feedback the dev 📝
       </a>
-      <p>
-        Feel free to give feedback for how you would like to see it improved.
-        Also visit the
-        <a
-          href="https://faucet.nervos.org/"
-          class="underline decoration-amber-400 decoration-wavy underline-offset-4"
-          >Nervos Testnet Faucet</a
-        >
-        if you need some free testnet CKB to test with.
-      </p>
       <div id="progress" class="hidden h-2 w-full overflow-hidden rounded">
         <div
           class="size-full animate-pulse bg-amber-400 [animation-delay:-3.00s] [animation-duration:6s]"
@@ -130,8 +126,18 @@
           class="size-full animate-pulse bg-amber-400 [animation-duration:6s]"
         ></div>
       </div>
+      <p>
+        Feel free to give feedback for how you would like to see it improved.
+        Also visit the
+        <a
+          href="https://faucet.nervos.org/"
+          class="underline decoration-amber-400 decoration-wavy underline-offset-4"
+          >Nervos Testnet Faucet</a
+        >
+        if you need some free testnet CKB to test with.
+      </p>
       <h2
-        class="items-center justify-center pb-4 pt-8 text-3xl font-medium text-slate-300"
+        class="items-center justify-center pt-8 pb-4 text-3xl font-medium text-slate-300"
       >
         What is NervosDAO?
       </h2>
@@ -153,7 +159,7 @@
         to solve this.
       </p>
       <h2
-        class="items-center justify-center pb-4 pt-8 text-3xl font-medium text-slate-300"
+        class="items-center justify-center pt-8 pb-4 text-3xl font-medium text-slate-300"
       >
         What is iCKB?
       </h2>
@@ -175,7 +181,7 @@
         to maturity, bypassing the NervosDAO ~30 days cycle.
       </p>
       <h2
-        class="items-center justify-center pb-4 pt-8 text-3xl font-medium text-slate-300"
+        class="items-center justify-center pt-8 pb-4 text-3xl font-medium text-slate-300"
       >
         Has iCKB been audited?
       </h2>
@@ -207,19 +213,14 @@
         before using the DApp.
       </p>
       <h2
-        class="items-center justify-center pb-4 pt-8 text-3xl font-medium text-slate-300"
+        class="items-center justify-center pt-8 pb-4 text-3xl font-medium text-slate-300"
       >
         Who is behind iCKB?
       </h2>
       <p>
         A developer, going by the pseudonym Phroi. I'd like to spend my time
         working on projects giving meaning to my life and improving the life of
-        users. Win-win situations. I'll present iCKB at
-        <a
-          href="https://www.commonknowledge.cc/"
-          class="underline decoration-amber-400 decoration-wavy underline-offset-4"
-          >CKCON 2024</a
-        >, feel free to come and say hi!!
+        users. Win-win situations.
       </p>
       <p>
         The Nervos Foundation who sponsored the development of iCKB project as a
