@@ -12,40 +12,39 @@
       property="og:description"
       content="An interface for interacting with iCKB scripts."
     />
-    <script type="module" crossorigin src="/assets/index-DNWmjHJl.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CYmvPtwC.css">
+    <script type="module" crossorigin src="/assets/index-Dd1PT8Dq.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-D2t6MR17.css">
   </head>
   <body
-    class="mx-auto max-w-3xl cursor-default rounded bg-zinc-900 text-slate-300 mix-blend-hard-light shadow-2xl shadow-slate-800"
+    id="app"
+    class="m-auto grid min-h-screen max-w-3xl cursor-default grid-cols-1 items-center space-y-8 bg-zinc-900 p-8 text-slate-300 mix-blend-hard-light sm:rounded sm:shadow-2xl sm:shadow-black"
   >
-    <div id="app" class="m-4 flex flex-col space-y-4 p-8">
+    <div class="m-4 flex flex-col space-y-4">
       <h1
-        class="flex flex-row items-center justify-center pb-4 text-5xl font-medium text-slate-200"
+        class="flex flex-row items-center justify-center pb-10 text-5xl font-medium"
       >
         <span class="mr-2 text-5xl text-amber-400">{</span>
         <span>iCKB</span>
         <span class="ml-2 text-5xl text-amber-400">}</span>
       </h1>
       <p>
-        This is the iCKB DApp a way to convert between CKB & iCKB, a liquid
+        This is the iCKB DApp. A way to convert between CKB & iCKB, a liquid
         representation of deposits in the iCKB protocol. It allows for fast
         withdrawals while maintaining the benefits of traditional NervosDAO
         deposits without the need for re-staking.
       </p>
-      <h2
-        class="items-center justify-center pt-8 pb-4 text-3xl font-medium text-slate-300"
-      >
+      <h2 class="items-center justify-center pt-8 pb-4 text-3xl font-medium">
         Would you like to try out the DApp?
       </h2>
       <button
         id="JoyID_mainnet"
-        class="text-s min-h-12 w-full cursor-pointer rounded border-2 border-amber-400 leading-relaxed font-bold tracking-wider text-amber-400 uppercase disabled:opacity-50"
+        class="text-s min-h-12 w-full cursor-pointer rounded border-2 border-amber-400 leading-relaxed font-bold tracking-wider text-amber-400 uppercase disabled:cursor-default disabled:opacity-50"
       >
         Yes, connect JoyID to Mainnet 🚧 (experimental)
       </button>
       <button
         id="JoyID_testnet"
-        class="text-s min-h-12 w-full cursor-pointer rounded border-2 border-amber-400 leading-relaxed font-bold tracking-wider text-amber-400 uppercase disabled:opacity-50"
+        class="text-s min-h-12 w-full cursor-pointer rounded border-2 border-amber-400 leading-relaxed font-bold tracking-wider text-amber-400 uppercase disabled:cursor-default disabled:opacity-50"
       >
         Yes, connect JoyID to Testnet ☕️
       </button>
@@ -57,6 +56,7 @@
       </a>
       <a
         href="https://t.me/NervosNation/307406"
+        target="_blank"
         class="text-s inline-flex min-h-12 w-full items-center justify-center rounded border-2 border-amber-400 text-center leading-relaxed font-bold tracking-wider text-amber-400 uppercase"
       >
         No, I'll feedback the dev 📝
@@ -136,9 +136,7 @@
         >
         if you need some free testnet CKB to test with.
       </p>
-      <h2
-        class="items-center justify-center pt-8 pb-4 text-3xl font-medium text-slate-300"
-      >
+      <h2 class="items-center justify-center pt-8 pb-4 text-3xl font-medium">
         What is NervosDAO?
       </h2>
       <p>
@@ -158,9 +156,7 @@
         >
         to solve this.
       </p>
-      <h2
-        class="items-center justify-center pt-8 pb-4 text-3xl font-medium text-slate-300"
-      >
+      <h2 class="items-center justify-center pt-8 pb-4 text-3xl font-medium">
         What is iCKB?
       </h2>
       <p>
@@ -180,9 +176,7 @@
         withdrawals are fast as they can withdraw from the iCKB deposits closest
         to maturity, bypassing the NervosDAO ~30 days cycle.
       </p>
-      <h2
-        class="items-center justify-center pt-8 pb-4 text-3xl font-medium text-slate-300"
-      >
+      <h2 class="items-center justify-center pt-8 pb-4 text-3xl font-medium">
         Has iCKB been audited?
       </h2>
       <p>
@@ -212,9 +206,7 @@
         >
         before using the DApp.
       </p>
-      <h2
-        class="items-center justify-center pt-8 pb-4 text-3xl font-medium text-slate-300"
-      >
+      <h2 class="items-center justify-center pt-8 pb-4 text-3xl font-medium">
         Who is behind iCKB?
       </h2>
       <p>
