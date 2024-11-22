@@ -9,9 +9,12 @@ import {
   toText,
   sanitize,
   toBigInt,
+  reservedCKB,
 } from "./utils.ts";
-import { l1StateOptions } from "./queries.ts";
+import { headerPlaceholder, l1StateOptions } from "./queries.ts";
 import Action from "./Action.tsx";
+import Progress from "./Progress.tsx";
+import { max } from "@ickb/lumos-utils";
 
 export default function App({ walletConfig }: { walletConfig: WalletConfig }) {
   const [isFrozen, freeze] = useState(false);
@@ -22,43 +25,62 @@ export default function App({ walletConfig }: { walletConfig: WalletConfig }) {
   let amount = toBigInt(text);
 
   const {
-    ckbBalance,
-    ickbUdtBalance,
+    ckbNative,
+    ickbNative,
     ckbAvailable,
-    ickbUdtAvailable,
+    ickbAvailable,
+    ckbBalance,
+    ickbBalance,
     tipHeader,
   } = useQuery(l1StateOptions(walletConfig, isFrozen)).data!;
 
-  const amountCap = isCkb2Udt ? ckbAvailable : ickbUdtAvailable;
-  if (amount > amountCap) {
-    amount = amountCap;
-    text = toText(amountCap);
+  const conversionCap = isCkb2Udt
+    ? max(ckbAvailable - reservedCKB, 0n)
+    : ickbAvailable;
+  if (amount > conversionCap) {
+    amount = conversionCap;
+    text = toText(conversionCap);
   }
 
-  const formReset = () => setRawText(direction2Symbol(true));
-  const formSetMax = (direction: boolean) =>
-    setRawText(
-      direction2Symbol(direction) +
-        toText(direction ? ckbAvailable : ickbUdtAvailable),
+  const formReset = () => setRawText(direction2Symbol(isCkb2Udt));
+  const deferredActionParams = useDeferredValue({
+    isCkb2Udt,
+    amount,
+    freeze,
+    formReset,
+    walletConfig,
+  });
+
+  if (tipHeader === headerPlaceholder) {
+    return (
+      <>
+        <Dashboard {...{ walletConfig }} />
+        <Progress>
+          Downloading the latest L1 Cell data, just for you. Hang tight!
+        </Progress>
+      </>
     );
+  }
 
   return (
     <>
-      <Dashboard
-        {...{ isFrozen, walletConfig, ckbBalance, ickbUdtBalance, formSetMax }}
-      />
+      <Dashboard {...{ walletConfig }} />
       <Form
-        {...{ rawText: symbol + text, setRawText, amount, tipHeader, isFrozen }}
-      />
-      <Action
-        {...useDeferredValue({
-          isCkb2Udt,
+        {...{
+          rawText: symbol + text,
+          setRawText,
           amount,
-          freeze,
-          formReset,
-          walletConfig,
-        })}
+          tipHeader,
+          isFrozen,
+          ckbNative,
+          ickbNative,
+          ckbAvailable,
+          ickbAvailable,
+          ckbBalance,
+          ickbBalance,
+        }}
       />
+      <Action {...deferredActionParams} />
     </>
   );
 }

@@ -6,8 +6,8 @@ import {
 import type { QueryClient } from "@tanstack/react-query";
 import {
   CKB,
+  epochSinceAdd,
   epochSinceCompare,
-  isPopulated,
   type ChainConfig,
   type I8Header,
   type I8Script,
@@ -39,7 +39,7 @@ export function sanitize(text: string) {
   let i = 0;
   for (; i < text.length; i++) {
     const c = text[i];
-    if ("1" <= c && c <= "9") {
+    if (("1" <= c && c <= "9") || c === ".") {
       break;
     }
   }
@@ -80,43 +80,46 @@ export function toBigInt(text: string) {
   );
 }
 
-export function maxWaitTime(ee: EpochSinceValue[], tipHeader: I8Header) {
-  const t = parseEpoch(tipHeader.epoch);
-  const e = ee.reduce((a, b) => (epochSinceCompare(a, b) === -1 ? b : a));
-  const epochs = e.index / e.length - t.index / t.length + e.number - t.number;
-  if (epochs <= 0.375) {
-    //90 minutes
-    return `${String(1 + Math.ceil(epochs * 4 * 60))} minutes`;
-  }
-
-  if (epochs <= 6) {
-    //24 hours
-    return `${String(1 + Math.ceil(epochs * 4))} hours`;
-  }
-
-  return `${String(1 + Math.ceil(epochs / 6))} days`;
+// Estimate bot ability to fulfill orders:
+// - CKB to iCKB orders at 100k CKB every minute
+// - iCKB to CKB orders at 200 CKB every minute
+export function orderMaturityEstimate(
+  isCkb2Udt: boolean,
+  amount: bigint,
+  tipHeader: I8Header,
+) {
+  return Object.freeze(
+    epochSinceAdd(parseEpoch(tipHeader.epoch), {
+      number: 0,
+      index: 1 + Number(amount / (isCkb2Udt ? 100000n * CKB : 200n * CKB)),
+      length: 4 * 60,
+    }),
+  );
 }
 
-export type TxInfo = ReturnType<typeof txInfoFrom>;
-
-export function txInfoFrom({
-  tx = TransactionSkeleton(),
-  calculateFee = (_: TransactionSkeletonType): bigint => {
-    throw Error("calculateFee not populated");
-  },
-  info = <readonly string[]>[],
-  error = "",
-}) {
-  if (error.length > 0) {
-    tx = TransactionSkeleton();
-  }
-
-  const isEmpty = !isPopulated(tx) && info.length === 0 && error.length === 0;
-  return Object.freeze({
-    tx,
-    calculateFee,
-    info: Object.freeze(info),
-    error,
-    isEmpty,
-  });
+export function maxEpoch(ee: EpochSinceValue[]) {
+  return ee.reduce((a, b) => (epochSinceCompare(a, b) === -1 ? b : a));
 }
+
+export const epochSinceValuePadding = Object.freeze(<EpochSinceValue>{
+  number: 0,
+  index: 0,
+  length: 1,
+});
+
+export type TxInfo = Readonly<{
+  tx: TransactionSkeletonType;
+  error: string;
+  fee: bigint;
+  estimatedMaturity: EpochSinceValue;
+}>;
+
+export const txInfoPadding: TxInfo = Object.freeze({
+  tx: TransactionSkeleton(),
+  error: "",
+  fee: 0n,
+  estimatedMaturity: epochSinceValuePadding,
+});
+
+// reservedCKB are reserved for state rent in conversions
+export const reservedCKB = 1000n * CKB;

@@ -1,10 +1,16 @@
-import { Button } from "react-aria-components";
-import { txInfoFrom, type TxInfo, type WalletConfig } from "./utils.ts";
+import {
+  epochSinceValuePadding,
+  toText,
+  txInfoPadding,
+  type TxInfo,
+  type WalletConfig,
+} from "./utils.ts";
 import Progress from "./Progress.tsx";
 import { l1StateOptions } from "./queries.ts";
 import { useState } from "react";
-import { isPopulated } from "@ickb/lumos-utils";
+import { isPopulated, type I8Header } from "@ickb/lumos-utils";
 import { useQuery } from "@tanstack/react-query";
+import { parseEpoch, type EpochSinceValue } from "@ckb-lumos/base/lib/since";
 
 export default function Action({
   isCkb2Udt,
@@ -19,57 +25,72 @@ export default function Action({
   formReset: () => void;
   walletConfig: WalletConfig;
 }) {
-  const [frozenTxInfo, _setFrozenTxInfo] = useState(txInfoFrom({}));
+  const [frozenTxInfo, _setFrozenTxInfo] = useState(txInfoPadding);
   const freezeTxInfo = (txInfo: TxInfo) => {
     _setFrozenTxInfo(txInfo);
-    freeze(!txInfo.isEmpty);
+    freeze(txInfo != txInfoPadding);
   };
-  const isFrozen = !frozenTxInfo.isEmpty;
-  const { data, isStale, isFetching } = useQuery(
-    l1StateOptions(walletConfig, isFrozen),
+  const isFrozen = frozenTxInfo !== txInfoPadding;
+  const {
+    data: l1Data,
+    isStale,
+    isFetching,
+  } = useQuery(l1StateOptions(walletConfig, isFrozen));
+  const { txBuilder, tipHeader } = l1Data!;
+  const txInfo = isFrozen ? frozenTxInfo : txBuilder(isCkb2Udt, amount);
+  const isValid =
+    isPopulated(txInfo.tx) &&
+    txInfo.fee > 0n &&
+    txInfo.estimatedMaturity !== epochSinceValuePadding &&
+    txInfo.error === "";
+  const { maturity, isReady } = timeUntilEpoch(
+    txInfo.estimatedMaturity,
+    tipHeader,
   );
-  const txInfo = isFrozen ? frozenTxInfo : data!.txBuilder(isCkb2Udt, amount);
-  const isValid = isPopulated(txInfo.tx);
 
   return (
-    <>
-      {txInfo.isEmpty ? (
-        <p>Downloading the latest L1 Cell data, just for you. Hang tight!</p>
-      ) : (
-        <div className={isFrozen ? "text-slate-100" : ""}>
-          {txInfo.info
-            .concat(txInfo.error !== "" ? [txInfo.error, ""] : [""])
-            .join(". ")}
-        </div>
-      )}
-      <Button
-        className="text-s h-12 w-full rounded border-2 border-amber-400 px-8 font-bold uppercase leading-relaxed tracking-wider text-amber-400 disabled:opacity-50"
-        {...{
-          onPress: isStale
-            ? () =>
-                walletConfig.queryClient.invalidateQueries({
-                  queryKey: [
-                    walletConfig.chain,
-                    walletConfig.address,
-                    "l1State",
-                  ],
-                })
-            : () => transact(txInfo, freezeTxInfo, formReset, walletConfig),
-          isDisabled: isFetching || isFrozen || !isValid,
-        }}
-      >
-        {isFetching
-          ? "refreshing..."
-          : !isValid
-            ? "nothing to sign"
-            : isStale
-              ? "refresh before signing"
-              : isFrozen
-                ? "transacting..."
-                : "sign with wallet"}
-      </Button>
-      {isFetching || isFrozen ? <Progress /> : undefined}
-    </>
+    <span
+      className={"grid grid-cols-2 items-center justify-items-center gap-y-4"}
+    >
+      <Progress isDone={!isFetching && !isFrozen}>
+        <button
+          className="text-s col-span-2 min-h-12 w-full cursor-pointer rounded border-2 border-amber-400 px-8 leading-relaxed font-bold tracking-wider text-amber-400 uppercase disabled:cursor-default disabled:opacity-50"
+          {...{
+            onClick: isStale
+              ? () =>
+                  walletConfig.queryClient.invalidateQueries({
+                    queryKey: [
+                      walletConfig.chain,
+                      walletConfig.address,
+                      "l1State",
+                    ],
+                  })
+              : () => transact(txInfo, freezeTxInfo, formReset, walletConfig),
+            disabled: isFetching || isFrozen || !isValid,
+          }}
+        >
+          {isFetching
+            ? "refreshing..."
+            : txInfo.error !== ""
+              ? txInfo.error
+              : !isValid
+                ? "finding a goose egg"
+                : isStale
+                  ? `refresh before ${amount > 0 ? `converting to ${isCkb2Udt ? "iCKB" : "CKB"}` : "collecting converted funds"}`
+                  : isFrozen
+                    ? "waiting transaction confirmation..."
+                    : amount > 0
+                      ? `request conversion to ${isCkb2Udt ? "iCKB" : "CKB"}`
+                      : `${isReady ? "fully" : "partially"} collect converted funds`}
+        </button>
+      </Progress>
+      <span className="leading-relaxed font-bold tracking-wider">Fee:</span>
+      <span>{toText(txInfo.fee)} CKB</span>
+      <span className="leading-relaxed font-bold tracking-wider">
+        Maturity:
+      </span>
+      <span>{maturity}</span>
+    </span>
   );
 }
 
@@ -91,6 +112,35 @@ async function transact(
     formReset();
     console.log(txHash, status);
   } finally {
-    freezeTxInfo(txInfoFrom({}));
+    freezeTxInfo(txInfoPadding);
   }
+}
+
+function timeUntilEpoch(e: EpochSinceValue, tipHeader: I8Header) {
+  const t = parseEpoch(tipHeader.epoch);
+  const epochs = e.index / e.length - t.index / t.length + e.number - t.number;
+  if (epochs <= 0) {
+    return { maturity: "⌛️ Ready", isReady: true };
+  }
+
+  if (epochs <= 0.375) {
+    //90 minutes
+    return {
+      maturity: `⏳ ${String(Math.ceil(epochs * 4 * 60))} minutes`,
+      isReady: false,
+    };
+  }
+
+  if (epochs <= 6) {
+    //24 hours
+    return {
+      maturity: `⏳ ${String(1 + Math.ceil(epochs * 4))} hours`,
+      isReady: false,
+    };
+  }
+
+  return {
+    maturity: `⏳ ${String(1 + Math.ceil(epochs / 6))} days`,
+    isReady: false,
+  };
 }

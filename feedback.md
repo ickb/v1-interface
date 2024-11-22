@@ -63,7 +63,7 @@ TODO
 > ![][image6]  
 > This is a strange way to say it. I think you mean “waiting for transaction to confirm”. [Jordan]
 
-TODO
+DONE
 
 > ![][image7]  
 > I see this in the console, but it’s not on the page. This isn’t very user friendly. Once it is confirmed it needs to display a confirmation message at the very least. I have something similar to this on [https://ckb.tools/sudt](https://ckb.tools/sudt). [Jordan]

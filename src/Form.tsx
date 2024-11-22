@@ -1,8 +1,11 @@
-import { Input, Label, TextField, ToggleButton } from "react-aria-components";
-import { direction2Symbol, symbol2Direction, toText } from "./utils.ts";
-import { CKB, type I8Header } from "@ickb/lumos-utils";
+import {
+  direction2Symbol,
+  reservedCKB,
+  symbol2Direction,
+  toText,
+} from "./utils.ts";
+import { CKB, max, min, type I8Header } from "@ickb/lumos-utils";
 import { ckb2Ickb, ickb2Ckb } from "@ickb/v1-core";
-import { headerPlaceholder } from "./queries.ts";
 
 export default function Form({
   rawText,
@@ -10,68 +13,109 @@ export default function Form({
   amount,
   tipHeader,
   isFrozen,
+  ckbNative,
+  ickbNative,
+  ckbAvailable,
+  ickbAvailable,
+  ckbBalance,
+  ickbBalance,
 }: {
   rawText: string;
   setRawText: (s: string) => void;
   amount: bigint;
   tipHeader: I8Header;
   isFrozen: boolean;
+  ckbNative: bigint;
+  ickbNative: bigint;
+  ckbBalance: bigint;
+  ickbBalance: bigint;
+  ckbAvailable: bigint;
+  ickbAvailable: bigint;
 }) {
   const symbol = rawText[0];
   const text = rawText.slice(1);
   const isCkb2Udt = symbol2Direction(symbol);
-  const toggle = (isC2I: boolean) => setRawText(direction2Symbol(isC2I) + text);
+  const toggle = () => setRawText(direction2Symbol(!isCkb2Udt) + text);
+
+  const nnn = min(max(ckbAvailable - reservedCKB, 0n), ckbNative);
+  let a = {
+    name: "CKB",
+    native: nnn,
+    locked: ckbBalance - nnn,
+    status:
+      ckbBalance === ckbNative
+        ? "✅"
+        : ckbBalance === ckbAvailable
+          ? "⌛️"
+          : "⏳",
+  };
+  let b = {
+    name: "ICKB",
+    native: ickbNative,
+    locked: ickbBalance - ickbNative,
+    status:
+      ickbBalance === ickbNative
+        ? "✅"
+        : ickbBalance === ickbAvailable
+          ? "⌛️"
+          : "⏳",
+  };
+  if (!isCkb2Udt) {
+    [a, b] = [b, a];
+  }
 
   return (
     <>
-      <TextField
-        isDisabled={isFrozen}
-        autoFocus={true}
-        value={text}
-        onChange={(newText) => setRawText(symbol + newText)}
-        autoComplete="off"
-        inputMode="decimal"
-        type="text"
-        className="text-s relative h-12 w-full rounded font-bold uppercase leading-relaxed tracking-wider text-amber-400 disabled:opacity-50"
-        aria-label="Amount to be converted"
-      >
-        <Input
+      <span className="grid grid-cols-3 items-center justify-items-center gap-y-4 leading-relaxed font-bold tracking-wider uppercase">
+        <span className="text-amber-400">{display(a.native, "✅")}</span>
+        <span className="text-2xl text-amber-400">{a.name}</span>
+        <span className="cursor-wait text-amber-400">
+          {display(a.locked, a.status)}
+        </span>
+        <input
           placeholder="0"
-          className="absolute inset-0 rounded border-2 border-amber-400 bg-transparent px-8 text-left text-amber-400"
+          disabled={isFrozen}
+          autoFocus={true}
+          value={text}
+          onChange={(e) => setRawText(symbol + e.target.value)}
+          autoComplete="off"
+          inputMode="decimal"
+          type="text"
+          className="col-span-3 w-full rounded border-0 bg-transparent text-center text-3xl text-amber-400 outline-none disabled:cursor-default"
+          aria-label="Amount to be converted"
         />
-        <Label className="absolute inset-0 inline-flex items-center justify-end px-8">
-          <ToggleButton
-            isDisabled={isFrozen}
-            className="rounded-full bg-amber-400 px-2 text-zinc-900 disabled:opacity-50"
-            isSelected={isCkb2Udt}
-            onChange={toggle}
-            aria-label="Conversion direction"
-          >
-            {isCkb2Udt ? "CKB" : "ICKB"}
-          </ToggleButton>
-        </Label>
-      </TextField>
-      {tipHeader === headerPlaceholder ? undefined : (
-        <ToggleButton
-          isDisabled={isFrozen}
-          className="text-s h-min-12 text-s h-min-12 flex w-full flex-auto items-center justify-center space-x-4 rounded px-8 text-center align-middle font-bold uppercase leading-relaxed tracking-wider"
-          isSelected={isCkb2Udt}
-          onChange={toggle}
-          aria-label="Conversion direction"
+        <span className="">{"1 " + a.name}</span>
+        <button
+          className="rotate-90 cursor-pointer border-0 bg-transparent text-5xl text-slate-300 disabled:cursor-default"
+          disabled={isFrozen}
+          onClick={toggle}
         >
-          <span className="w-full">{isCkb2Udt ? "1 CKB" : "1 ICKB"}</span>
-          <span className="px-4">⇌</span>
-          <span className="w-full">
-            {approxConversion(isCkb2Udt, CKB, tipHeader)}
-          </span>
-        </ToggleButton>
-      )}
-      {amount > 0 ? (
-        <div className="text-center font-bold uppercase leading-relaxed tracking-wider">
-          {`~ ${approxConversion(isCkb2Udt, amount, tipHeader)}`}
-        </div>
-      ) : undefined}
+          ⇌
+        </button>
+        <span className="text-center">
+          {approxConversion(isCkb2Udt, CKB, tipHeader) + " " + b.name}
+        </span>
+        <span className="col-span-3 text-center text-3xl text-amber-400">
+          ⏳{approxConversion(isCkb2Udt, amount, tipHeader)}
+        </span>
+        <span className="text-amber-400">{display(b.native, "✅")}</span>
+        <span className="text-2xl text-amber-400">{b.name}</span>
+        <span className="cursor-wait text-amber-400">
+          {display(b.locked, b.status)}
+        </span>
+      </span>
     </>
+  );
+}
+
+function display(shannons: bigint, prefix: string) {
+  const isMaturing = prefix === "⏳";
+  return (
+    <span className={"flex flex-row " + (isMaturing ? "cursor-wait" : "")}>
+      <span className={isMaturing ? "animate-pulse" : ""}>{prefix}</span>
+      <span className="sm:hidden">{String(shannons / CKB)}</span>
+      <span className="hidden sm:block">{toText(shannons)}</span>
+    </span>
   );
 }
 
@@ -80,11 +124,10 @@ function approxConversion(
   amount: bigint,
   tipHeader: I8Header,
 ) {
-  let [convertedAmount, unit] = isCkb2Udt
-    ? [ckb2Ickb(amount, tipHeader), "ICKB"]
-    : [ickb2Ckb(amount, tipHeader), "CKB"];
+  let convertedAmount = isCkb2Udt
+    ? ckb2Ickb(amount, tipHeader)
+    : ickb2Ckb(amount, tipHeader);
   //Worst case scenario is a 0.1% fee for bot
   convertedAmount -= convertedAmount / 1000n;
-
-  return `${toText(convertedAmount)} ${unit}`;
+  return toText(convertedAmount);
 }

@@ -1,5 +1,4 @@
 import {
-  TransactionSkeleton,
   encodeToAddress,
   type TransactionSkeletonType,
 } from "@ckb-lumos/helpers";
@@ -20,7 +19,6 @@ import {
   txSize,
 } from "@ickb/lumos-utils";
 import {
-  addWithdrawalRequestGroups,
   ickbDelta,
   ickbLogicScript,
   ickbPoolSifter,
@@ -29,15 +27,9 @@ import {
   orderSifter,
   ownedOwnerScript,
 } from "@ickb/v1-core";
-import {
-  maxWaitTime,
-  txInfoFrom,
-  type RootConfig,
-  type WalletConfig,
-} from "./utils.ts";
-import { addChange, base, convert } from "./transaction.ts";
+import { txInfoPadding, type RootConfig, type WalletConfig } from "./utils.ts";
+import { addChange, base as add, convert } from "./transaction.ts";
 import type { Cell, Header, HexNumber, Transaction } from "@ckb-lumos/base";
-import { parseAbsoluteEpochSince } from "@ckb-lumos/base/lib/since";
 
 export function l1StateOptions(walletConfig: WalletConfig, isFrozen: boolean) {
   return queryOptions({
@@ -54,12 +46,14 @@ export function l1StateOptions(walletConfig: WalletConfig, isFrozen: boolean) {
       }
     },
     placeholderData: {
-      ckbBalance: -1n,
-      ickbUdtBalance: -1n,
+      ckbNative: 6n * CKB * CKB,
+      ickbNative: 3n * CKB * CKB,
       ckbAvailable: 6n * CKB * CKB,
-      ickbUdtAvailable: 3n * CKB * CKB,
+      ickbAvailable: 3n * CKB * CKB,
+      ckbBalance: 6n * CKB * CKB,
+      ickbBalance: 3n * CKB * CKB,
       tipHeader: headerPlaceholder,
-      txBuilder: () => txInfoFrom({}),
+      txBuilder: () => txInfoPadding,
       hasMatchable: false,
     },
     enabled: !isFrozen,
@@ -145,49 +139,53 @@ async function getL1State(walletConfig: WalletConfig) {
     config,
   );
 
-  const hasMatchable = myOrders.some((o) => o.info.isMatchable);
+  const matchableOrders = [];
+  const completedOrders = [];
+  for (const o of myOrders) {
+    const { isMatchable, isDualRatio } = o.info;
+    if (isMatchable && !isDualRatio) {
+      matchableOrders.push(o);
+    } else {
+      // Withdraw completed orders and dual ratio orders
+      completedOrders.push(o);
+    }
+  }
 
-  const txConsumesIntermediate =
-    mature.length > 0 || receipts.length > 0 || myOrders.length > 0;
+  const hasMatchable = matchableOrders.length > 0;
 
-  // Calculate balances and baseTx
-  const { tx: baseTx, info: baseInfo } = base({
-    capacities,
-    udts,
-    myOrders,
+  const txHasNonNative =
+    mature.length > 0 || receipts.length > 0 || completedOrders.length > 0;
+
+  // Calculate native balances
+  let txInfo = add({ capacities, udts, tipHeader });
+  const ckbNative = ckbDelta(txInfo.tx, config);
+  const ickbNative = ickbDelta(txInfo.tx, config);
+
+  // Calculate Available balances and baseTx
+  txInfo = add({
+    txInfo,
+    myOrders: completedOrders,
     receipts,
     wrGroups: mature,
+    tipHeader,
   });
-  const txSizeOverheadPromise = getTxSizeOverhead(baseTx);
+  const txSizeOverheadPromise = getTxSizeOverhead(txInfo.tx);
+  const ckbAvailable = ckbDelta(txInfo.tx, config);
+  const ickbAvailable = ickbDelta(txInfo.tx, config);
 
-  const ickbUdtBalance = ickbDelta(baseTx, config);
-  const ickbUdtAvailable = ickbUdtBalance;
-
-  let ckbBalance = ckbDelta(baseTx, config);
-  const ckbAvailable = max((ckbBalance / CKB - 1000n) * CKB, 0n);
-  let info = baseInfo;
-  if (notMature.length > 0) {
-    ckbBalance += ckbDelta(
-      addWithdrawalRequestGroups(TransactionSkeleton(), notMature),
-      config,
-    );
-
-    const wrWaitTime = maxWaitTime(
-      notMature.map((g) =>
-        parseAbsoluteEpochSince(
-          g.ownedWithdrawalRequest.cellOutput.type![since],
-        ),
-      ),
-      tipHeader,
-    );
-
-    info = Object.freeze(
-      [
-        `Excluding ${notMature.length} Withdrawal Request${notMature.length > 1 ? "s" : ""}` +
-          ` with maturity in ${wrWaitTime}`,
-      ].concat(info),
-    );
-  }
+  // Calculate full balances
+  const fullTxInfo = add({
+    txInfo,
+    myOrders: matchableOrders,
+    wrGroups: notMature,
+    tipHeader,
+  });
+  const ckbBalance = ckbDelta(fullTxInfo.tx, config);
+  const ickbBalance = ickbDelta(fullTxInfo.tx, config);
+  txInfo = Object.freeze({
+    ...txInfo,
+    estimatedMaturity: fullTxInfo.estimatedMaturity,
+  });
 
   const [txSizeOverhead, feeRate] = await Promise.all([
     txSizeOverheadPromise,
@@ -202,8 +200,6 @@ async function getL1State(walletConfig: WalletConfig) {
   };
 
   const txBuilder = (isCkb2Udt: boolean, amount: bigint) => {
-    const txInfo = txInfoFrom({ tx: baseTx, calculateFee, info });
-
     if (amount > 0n) {
       return convert(
         txInfo,
@@ -211,22 +207,28 @@ async function getL1State(walletConfig: WalletConfig) {
         amount,
         ickbPool,
         tipHeader,
+        calculateFee,
         walletConfig,
       );
     }
 
-    if (txConsumesIntermediate) {
-      return addChange(txInfo, walletConfig);
+    if (txHasNonNative) {
+      return addChange(txInfo, calculateFee, walletConfig);
     }
 
-    return txInfoFrom({ info, error: "Nothing to convert" });
+    return Object.freeze({
+      ...txInfo,
+      error: "Nothing to do",
+    });
   };
 
   return {
+    ckbNative,
+    ickbNative,
     ckbBalance,
-    ickbUdtBalance,
+    ickbBalance,
     ckbAvailable,
-    ickbUdtAvailable,
+    ickbAvailable,
     tipHeader,
     txBuilder,
     hasMatchable,

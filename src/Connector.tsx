@@ -82,8 +82,7 @@ export default function Connector({
     return (
       <>
         <EmptyDashboard />
-        <p>Waiting for {walletName} authorization...</p>
-        <Progress />
+        <Progress>Waiting for {walletName} authorization...</Progress>
       </>
     );
 
