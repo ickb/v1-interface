@@ -25,6 +25,7 @@ export default function Action({
   formReset: () => void;
   walletConfig: WalletConfig;
 }) {
+  const [message, setMessage] = useState("");
   const [frozenTxInfo, _setFrozenTxInfo] = useState(txInfoPadding);
   const freezeTxInfo = (txInfo: TxInfo) => {
     _setFrozenTxInfo(txInfo);
@@ -65,20 +66,27 @@ export default function Action({
                       "l1State",
                     ],
                   })
-              : () => transact(txInfo, freezeTxInfo, formReset, walletConfig),
+              : () =>
+                  transact(
+                    txInfo,
+                    freezeTxInfo,
+                    setMessage,
+                    formReset,
+                    walletConfig,
+                  ),
             disabled: isFetching || isFrozen || !isValid,
           }}
         >
-          {isFetching
-            ? "refreshing..."
-            : txInfo.error !== ""
-              ? txInfo.error
-              : !isValid
-                ? "finding a goose egg"
-                : isStale
-                  ? `refresh before ${amount > 0 ? `converting to ${isCkb2Udt ? "iCKB" : "CKB"}` : "collecting converted funds"}`
-                  : isFrozen
-                    ? "waiting transaction confirmation..."
+          {isFrozen
+            ? message
+            : isFetching
+              ? "refreshing..."
+              : txInfo.error !== ""
+                ? txInfo.error
+                : !isValid
+                  ? "finding a goose egg"
+                  : isStale
+                    ? `refresh before ${amount > 0 ? `converting to ${isCkb2Udt ? "iCKB" : "CKB"}` : "collecting converted funds"}`
                     : amount > 0
                       ? `request conversion to ${isCkb2Udt ? "iCKB" : "CKB"}`
                       : `${isReady ? "fully" : "partially"} collect converted funds`}
@@ -97,21 +105,33 @@ export default function Action({
 async function transact(
   txInfo: TxInfo,
   freezeTxInfo: (txInfo: TxInfo) => void,
+  setMessage: (message: string) => void,
   formReset: () => void,
   walletConfig: WalletConfig,
 ) {
-  const { rpc, sendSigned } = walletConfig;
+  const { rpc, sendSigned, queryClient } = walletConfig;
   try {
     freezeTxInfo(txInfo);
+    setMessage("Waiting for user confirmation...");
     const txHash = await sendSigned(txInfo.tx);
+
     let status = "pending";
     while (status === "pending" || status === "proposed") {
+      setMessage("Waiting for network confirmation...");
       await new Promise((r) => setTimeout(r, 10000));
       status = (await rpc.getTransaction(txHash)).txStatus.status;
     }
-    formReset();
-    console.log(txHash, status);
+
+    if (status === "committed") {
+      setMessage("Transaction confirmed!!!");
+      formReset();
+    } else {
+      setMessage("Something went wrong, retry in a minute");
+    }
+    queryClient.invalidateQueries(l1StateOptions(walletConfig, true));
+    await new Promise((r) => setTimeout(r, 10000));
   } finally {
+    setMessage("");
     freezeTxInfo(txInfoPadding);
   }
 }

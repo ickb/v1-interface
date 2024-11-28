@@ -2,7 +2,7 @@
 
 > Some other small things would be beneficial in addition to more explanation text, such as a link to the explorer once a transaction is submitted. [Jordan]
 
-Yup, to do
+Just displaying the tx status is ok, user can access the explorer with the title link
 
 > I think it'd be good if there some info about what ickb is, and have some sort of a wireframe for the landing page. you know like we should have blurb saying ickb is funded by the foundation with foundation logo etc and so on [Ahrom]
 
@@ -10,7 +10,7 @@ Halfway done, not sure about the foundation logo on the homepage.
 
 > You will always get less ickb than what you exchanged. That’s because the lifetime earnings of the dao are baked into the ickb you receive correct? Looks like around 13%. [Sean]
 
-Halfway done, now the exchange ratio is shown in the app and in the homepage there is a short explanation with links about the protocol. Not sure I want to add a tooltip in the app itself.
+The exchange ratio is shown in the app and in the homepage there is a short explanation with links about the protocol.
 
 > Is there a wait to exchange ickb back to CKB? [Sean]
 
@@ -31,109 +31,109 @@ Done
 > ![][image1]  
 > Text is cut off on sides and bottom. Make sure line height is sufficient for vertically holding the text, or enable overflow on the container. Don’t cut off on the left and right. Find a different way. [Jordan]
 
-TODO
+Done
 
 > ![][image2]  
 > Use “.toLocaleString()” to format the amount numbers. [Jordan]
 
-TODO
+Done
 
 > ![][image2]  
 > The address should fit entirely or cut off with expected sizes. Use CSS clamp, calc, or breakpoints to adjust the size to fit based on resolution. If you need to cut off on smaller resolutions, use something more common like a fixed 8…8 characters or 16…16 characters. [Jordan]
 
-TODO
+Done
 
 > ![][image3]  
 > The focus box on the amount looks strange. I’d recommend simply removing it. [Jordan]
 
-TODO
+Done
 
 > ![][image4]  
 > This information has a lot of good detail, but it does not tell you anything about efficiency or difficulties that may occur. From the standpoint of a user, a standard deposit vs a limit order doesn’t matter.
 >
 > One way to go about this is to have a simple view and an advanced view. In the simple view, hide all of the details that are not needed except amounts, rate, and any helpful information. Is there an optimal amount they should use to get a better deal or have it go through faster? [Jordan]
 
-TODO
+Done
 
 > ![][image5]  
 > This adds another step and potential confusion for the user. They should not have to refresh manually. Automatically refresh it if it needs to for the amounts. If it needs to refresh again immediately before signing, do it automatically. [Jordan]
 
-TODO
+Won't fix, when user refresh outputs may change, user have to acknowledge the updated tx
 
 > ![][image6]  
 > This is a strange way to say it. I think you mean “waiting for transaction to confirm”. [Jordan]
 
-DONE
+Done
 
 > ![][image7]  
 > I see this in the console, but it’s not on the page. This isn’t very user friendly. Once it is confirmed it needs to display a confirmation message at the very least. I have something similar to this on [https://ckb.tools/sudt](https://ckb.tools/sudt). [Jordan]
 
-TODO
+Done
 
 > ![][image8]  
 > I don’t really understand this. Melting a completed order? Is this an open limit order? [Jordan]
 
-TODO
+Done
 
 > ![][image9]  
 > Could use an info bubble to simply explain the exchange rate and how it is always decreasing slowly as the value of iCKB continues to rise. This should be extremely high level. The reason is you don’t want the average user, who didn’t read anything else, to think that the rate might be “bad” and search for a better time to do it. The rate is calculated so it’s never a bad time. [Jordan]
 
-TODO
+Done
 
 > ![][image10]  
 > When hovering the mouse over the input field use the text cursor. [Jordan]
 
-TODO
+Done
 
 > ![][image11]  
 > When the rate changes as a result of an automatic refresh, it is beneficial to give an effect to the text to show it changed. Sometimes this means giving it a bright shadow that fades out in a second. Something like that. [Jordan]
 
-TODO
+For now is ok, doesn't change enough to make a difference
 
 > ![][image12]  
 > Use your horizontal space better on mobile devices. This usually means 10px padding around the sides. [Jordan]
 
-TODO
+Done
 
 > ![][image13]  
 > Make sure you don’t have text overflows on things like buttons on mobile devices. [Jordan]
 
-TODO
+Done
 
 > ![][image14]  
 > It will not let me type in a number greater than 0\. It is not clear on why. I see I have 1000 CKB. [Jordan]
 
-TODO
+Done
 
 > ![][image15]  
 > Same as above going on here. I can’t exchange and there is a strange message about maturity. The user will not be clear on what is going on, or more importantly, what they need to do. [Jordan]
 
-TODO
+Done
 
 > ![][image16]  
 > Received this message when sending transactions too quickly. If this is expected, that’s ok, but the user needs to be given an indication of some kind that it doesn’t work so they can resubmit. [Jordan]
 
-TODO
+Done
 
 > ![][image17]  
 > When there is no amount typed in I see this. I believe this is indicating I have an open limit order that isn’t filled and this will cancel it? There is no place to see open orders I have that are pending, which is confusing. [Jordan]
 
-TODO
+Done
 
 > ![][image18]  
 > A fee of 99.79 CKB is significant. Is this purely a fee or does this include the refundable cell cost? If it’s refundable it needs to be indicated. [Jordan]
 
-TODO
+Doesn't include cell cost. You were converting almost 100k CKB, that 99.79 CKB is a 0.1% Fee to the bot for covering the capital rent needed to run it. No fee for conversions using directly the core of the protocol.
 
 > ![][image19]  
 > It is very difficult to select the number to delete it or copy it. Selecting the field to paste also seems problematic. [Jordan]
 
-TODO
+Done
 
 > ![][image20]  
 > It looks like the button text might be selectable, which puts little corners outside the round corners. Disable text selection. [Jordan]
 
-TODO
+Done
 
 [image1]: <data:image/png;base64,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>
 

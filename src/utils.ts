@@ -66,15 +66,26 @@ export function sanitize(text: string) {
     }
   }
 
-  return [decimalChars, [dot], fractionalChars].flat().join("");
+  return (
+    (decimalChars.length > 0
+      ? BigInt(decimalChars.join("")).toLocaleString("en-US")
+      : dot.length > 0
+        ? "0"
+        : "") +
+    dot +
+    fractionalChars.join("")
+  );
 }
 
 export function toText(n: bigint) {
-  return String(n / CKB) + String(Number(n % CKB) / Number(CKB)).slice(1);
+  return (
+    (n / CKB).toLocaleString("en-US") +
+    String(Number(n % CKB) / Number(CKB)).slice(1)
+  );
 }
 
 export function toBigInt(text: string) {
-  const [decimal, ...fractionals] = text.split(".");
+  const [decimal, ...fractionals] = text.split(",").join("").split(".");
   return BigInt(
     (decimal ?? "0") + ((fractionals ?? []).join("") + "00000000").slice(0, 8),
   );

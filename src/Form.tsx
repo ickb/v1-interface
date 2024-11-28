@@ -113,7 +113,10 @@ function display(shannons: bigint, prefix: string) {
   return (
     <span className={"flex flex-row " + (isMaturing ? "cursor-wait" : "")}>
       <span className={isMaturing ? "animate-pulse" : ""}>{prefix}</span>
-      <span className="sm:hidden">{String(shannons / CKB)}</span>
+      <span className="sm:hidden">
+        {String(shannons / CKB)}
+        {shannons % CKB === 0n ? "" : "+"}
+      </span>
       <span className="hidden sm:block">{toText(shannons)}</span>
     </span>
   );

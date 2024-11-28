@@ -218,7 +218,7 @@ async function getL1State(walletConfig: WalletConfig) {
 
     return Object.freeze({
       ...txInfo,
-      error: "Nothing to do",
+      error: "Nothing to do for now",
     });
   };
 

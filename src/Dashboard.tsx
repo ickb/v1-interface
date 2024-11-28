@@ -5,7 +5,7 @@ export function EmptyDashboard() {
     <>
       <h1 className="flex flex-row items-center justify-center py-4 text-5xl font-medium">
         <span className="mr-2 text-5xl text-amber-400">{"{"}</span>
-        <span>iCKB DApp</span>
+        <span>iCKB</span>
         <span className="ml-2 text-5xl text-amber-400">{"}"}</span>
       </h1>
     </>
