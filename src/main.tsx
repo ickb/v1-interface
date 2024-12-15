@@ -26,7 +26,7 @@ const testnetRootConfigPromise = chainConfigFrom(
 
 const mainnetRootConfigPromise = chainConfigFrom(
   "mainnet",
-  undefined,
+  "https://mainnet.ckbapp.dev/",
   true,
   getIckbScriptConfigs,
 ).then((chainConfig) => {
