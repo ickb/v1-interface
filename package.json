@@ -6,7 +6,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "refresh": "rm -fr dist/* node_modules/* pnpm-lock.yaml && pnpm self-update && corepack use pnpm@latest && pnpm up"
   },
   "dependencies": {
     "@ckb-ccc/ccc": "latest",
@@ -18,29 +19,30 @@
     "@ckb-lumos/rpc": "^0.23.0",
     "@ickb/lumos-utils": "1.4.2",
     "@ickb/v1-core": "1.4.2",
-    "@tanstack/react-query": "^5.61.5",
+    "@tanstack/react-query": "^5.62.8",
     "immutable": "^4.3.7",
-    "react": "rc",
-    "react-dom": "rc"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@babel/preset-react": "^7.25.9",
+    "@babel/preset-react": "^7.26.3",
     "@tailwindcss/vite": "next",
-    "@types/react": "npm:types-react@rc",
-    "@types/react-dom": "npm:types-react-dom@rc",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
     "@typescript-eslint/eslint-plugin": "canary",
     "@typescript-eslint/parser": "canary",
+    "@vitejs/plugin-basic-ssl": "^1.2.0",
     "@vitejs/plugin-react": "^4.3.4",
     "babel-plugin-react-compiler": "latest",
-    "eslint": "^9.15.0",
+    "eslint": "^9.17.0",
     "eslint-plugin-react-compiler": "latest",
-    "eslint-plugin-react-hooks": "^5.0.0",
-    "eslint-plugin-react-refresh": "^0.4.14",
-    "prettier": "^3.4.1",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.9",
     "tailwindcss": "next",
     "typescript": "next",
     "vite": "^5.4.11"
   },
-  "packageManager": "pnpm@9.14.2+sha256.06e65a4965baff6d6097f9c8f75c35f6d420974dbc03d775009056a69edfd271"
+  "packageManager": "pnpm@9.15.1+sha512.1acb565e6193efbebda772702950469150cf12bcc764262e7587e71d19dc98a423dff9536e57ea44c49bdf790ff694e83c27be5faa23d67e0c033b583be4bfcf"
 }
